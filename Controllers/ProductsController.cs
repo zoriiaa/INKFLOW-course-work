@@ -14,12 +14,16 @@ public class ProductsController : ControllerBase
         _productService = productService;
     }
 
-    [HttpGet] 
-    public async Task<IActionResult> GetCatalog([FromQuery] int? categoryId, [FromQuery] int? brandId)
-    {
-        var products = await _productService.GetCatalogAsync(categoryId, brandId);
-        return Ok(products);
-    }
+    [HttpGet]
+    public async Task<IActionResult> GetCatalog(
+        [FromQuery] int? categoryId,
+        [FromQuery] int? brandId,
+        [FromQuery] string? searchTerm)
+        
+        {
+            var products = await _productService.GetCatalogAsync(categoryId, brandId,searchTerm);
+            return Ok(products);
+        }
 
     [HttpGet("{id}")] 
     public async Task<IActionResult> GetProduct(int id)

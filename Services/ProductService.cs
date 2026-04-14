@@ -18,7 +18,7 @@ public class ProductService : IProductService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProductCardDto>> GetCatalogAsync(int? categoryId, int? brandId)
+    public async Task<IEnumerable<ProductCardDto>> GetCatalogAsync(int? categoryId, int? brandId, string? searchTerm)
     {
         var query = _context.Products
             .Include(p => p.Brand)
@@ -27,6 +27,8 @@ public class ProductService : IProductService
 
         if (categoryId.HasValue) query = query.Where(p => p.CategoryId == categoryId);
         if (brandId.HasValue) query = query.Where(p => p.BrandId == brandId);
+        if (!string.IsNullOrEmpty(searchTerm)) query = query.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower()));
+        
 
         var products = await query.ToListAsync();
 
@@ -34,6 +36,7 @@ public class ProductService : IProductService
         return _mapper.Map<IEnumerable<ProductCardDto>>(products);
     }
     
+
     public async Task<ProductDetailDto?> GetProductByIdAsync(int id)
     {
         var product = await _context.Products
@@ -43,6 +46,8 @@ public class ProductService : IProductService
 
         return _mapper.Map<ProductDetailDto>(product);
     }
+    
+    
 
    
 }
