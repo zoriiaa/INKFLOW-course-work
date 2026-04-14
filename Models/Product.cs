@@ -10,8 +10,12 @@ public class Product
     public decimal Price { get; set; }
     public string? Color { get; set; } 
     public int Stock { get; set; }
+    
     public float? Thickness { get; set; }
     public float? Density { get; set; }
+    public string? Specification { get; set; }
+    public string? Size { get; set; }
+    public string? Hardness { get; set; }
     
     public Brand? Brand { get; set; }
     public int BrandId { get; set; }

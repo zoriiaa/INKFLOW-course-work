@@ -4,6 +4,7 @@ using INKFLOW.DTOs;
 using INKFLOW.Models;
 using INKFLOW.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace INKFLOW.Services;
 
@@ -18,18 +19,33 @@ public class ProductService : IProductService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProductCardDto>> GetCatalogAsync(int? categoryId, int? brandId, string? searchTerm)
+    public async Task<IEnumerable<ProductCardDto>> GetCatalogAsync(
+        int? categoryId, 
+        int? brandId, 
+        string? searchTerm,
+        int pageNumber,
+        int pageSize)
     {
         var query = _context.Products
             .Include(p => p.Brand)
             .Include(p => p.Category)
             .AsQueryable();
 
-        if (categoryId.HasValue) query = query.Where(p => p.CategoryId == categoryId);
+        if (categoryId.HasValue)
+        {
+            var categoryIds = await _context.Categories
+                .Where(c => c.Id == categoryId.Value || c.ParentCategoryId == categoryId)
+                .Select(c => c.Id)
+                .ToListAsync();
+            query = query.Where(p => categoryIds.Contains(p.CategoryId));
+        }
         if (brandId.HasValue) query = query.Where(p => p.BrandId == brandId);
         if (!string.IsNullOrEmpty(searchTerm)) query = query.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower()));
         
-
+        query = query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
+        
         var products = await query.ToListAsync();
 
         

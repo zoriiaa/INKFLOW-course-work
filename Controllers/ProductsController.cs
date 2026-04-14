@@ -18,10 +18,12 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetCatalog(
         [FromQuery] int? categoryId,
         [FromQuery] int? brandId,
-        [FromQuery] string? searchTerm)
+        [FromQuery] string? searchTerm,
+        [FromQuery] int pageNumber=1,
+        [FromQuery] int pageSize=25)
         
         {
-            var products = await _productService.GetCatalogAsync(categoryId, brandId,searchTerm);
+            var products = await _productService.GetCatalogAsync(categoryId, brandId,searchTerm, pageNumber, pageSize);
             return Ok(products);
         }
 
