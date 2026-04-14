@@ -52,4 +52,4 @@ INKFLOW
 
 Автор: @zoriiaa
 *Створено з пристрастю до мистецтва та чистого коду.*
-![INKFLOW Logo](C:\Users\Admin\Desktop\курсова\logoo.svg)
+
