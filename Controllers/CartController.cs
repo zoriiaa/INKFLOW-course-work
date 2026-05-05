@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using INKFLOW.Models;
 using System.Security.Claims;
-using INKFLOW.Data;
-using INKFLOW.DTOs;
+using INKFLOW.Services;
 
 namespace INKFLOW.Controllers;
 
@@ -13,11 +10,11 @@ namespace INKFLOW.Controllers;
 [Route("api/[controller]")]
 public class CartController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly CartService _cartService;
 
-    public CartController(AppDbContext context)
+    public CartController(CartService cartService)
     {
-        _context = context;
+        _cartService = cartService;
     }
 
     [HttpPost("add")]
@@ -26,26 +23,8 @@ public class CartController : ControllerBase
         var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
         
-        int userId = int.Parse(userIdStr);
         
-        var existingItem = await _context.CartItems
-            .FirstOrDefaultAsync(c=> c.UserId == userId && c.ProductId == productId);
-        if (existingItem != null)
-        {
-            existingItem.Quantity += quantity;
-        }
-        else
-        {
-            var cartItem = new CartItem
-            {
-                UserId = userId,
-                ProductId = productId,
-                Quantity = quantity
-            };
-            _context.CartItems.Add(cartItem);
-        }
-        
-        await _context.SaveChangesAsync();
+        await _cartService.AddToCartAsync(int.Parse(userIdStr), productId, quantity);
         return Ok(new{message = "Товар додано в кошик"});
     }
     
@@ -55,25 +34,7 @@ public class CartController : ControllerBase
         var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if(string.IsNullOrEmpty(userIdStr)) return Unauthorized();
         
-        int userId = int.Parse(userIdStr);
-        
-        var cartItems = await _context.CartItems
-            .Where(c=> c.UserId == userId)
-            .Include(c=> c.Product)
-            .Select(c=>new CartItemDto
-            {
-                ProductId = c.Product.Id,
-                ProductName = c.Product.Name,
-                Price = c.Product.Price,
-                Quantity = c.Quantity
-            })
-            .ToListAsync();
-        
-        var response = new CartResponseDto
-        {
-            Items = cartItems
-        };
-        
+        var response = await _cartService.GetCartAsync(int.Parse(userIdStr));
         return Ok(response);
     }
     
