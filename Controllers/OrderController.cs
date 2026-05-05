@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using INKFLOW.Data;
-using INKFLOW.Models;
+using INKFLOW.Services.Interfaces;
 using System.Security.Claims;
 using INKFLOW.Services;
 
@@ -13,9 +11,9 @@ namespace INKFLOW.Controllers;
 [Route("api/[controller]")]
 public class OrderController : ControllerBase
 {
-    private readonly OrderService _orderService;
+    private readonly IOrderService _orderService;
 
-    public OrderController(OrderService  orderService)
+    public OrderController(IOrderService  orderService)
     {
         _orderService = orderService;
     }

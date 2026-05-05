@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using INKFLOW.Services;
+using INKFLOW.Services.Interfaces;
 
 namespace INKFLOW.Controllers;
 
@@ -10,9 +10,9 @@ namespace INKFLOW.Controllers;
 [Route("api/[controller]")]
 public class CartController : ControllerBase
 {
-    private readonly CartService _cartService;
+    private readonly ICartService _cartService;
 
-    public CartController(CartService cartService)
+    public CartController(ICartService cartService)
     {
         _cartService = cartService;
     }

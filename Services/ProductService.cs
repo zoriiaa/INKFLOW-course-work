@@ -63,7 +63,25 @@ public class ProductService : IProductService
         return _mapper.Map<ProductDetailDto>(product);
     }
     
-    
+    //For Admin
+    public async Task CreateProductAsync(ProductCreateDto dto)
+    {
+        var product = _mapper.Map<Product>(dto);
+
+        _context.Products.Add(product);
+        await _context.SaveChangesAsync();
+
+    }
+
+    public async Task<bool> DeleteProductAsync(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null) return false;
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
    
 }

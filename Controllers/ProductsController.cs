@@ -1,5 +1,6 @@
 ﻿using INKFLOW.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using INKFLOW.DTOs;
 
 namespace INKFLOW.Controllers;
 
@@ -33,5 +34,21 @@ public class ProductsController : ControllerBase
         var product = await _productService.GetProductByIdAsync(id);
         if (product == null) return NotFound();
         return Ok(product);
+    }
+
+    [HttpPost("admin/create")] 
+    public async Task<IActionResult> CreateProduct(ProductCreateDto dto)
+    {
+        
+        await _productService.CreateProductAsync(dto);
+        return Ok(new { message = "Товар успішно додано в базу!" });
+    }
+
+    [HttpDelete("admin/{id}")] 
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var deleted = await _productService.DeleteProductAsync(id);
+        if (!deleted) return NotFound("Такого товару нема");
+        return Ok(new { message = "Видалили!" });
     }
 }

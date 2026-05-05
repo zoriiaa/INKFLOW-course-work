@@ -1,10 +1,11 @@
 ﻿using INKFLOW.Data;
 using INKFLOW.Models;
 using Microsoft.EntityFrameworkCore;
+using INKFLOW.Services.Interfaces;
 
 namespace INKFLOW.Services;
 
-public class OrderService
+public class OrderService : IOrderService
 {
     private readonly AppDbContext _context;
 

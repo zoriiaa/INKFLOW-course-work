@@ -1,11 +1,12 @@
 ﻿using INKFLOW.Data;
 using INKFLOW.DTOs;
 using INKFLOW.Models;
+using INKFLOW.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace INKFLOW.Services;
 
-public class CartService
+public class CartService : ICartService
 {
     private readonly AppDbContext _context;
 

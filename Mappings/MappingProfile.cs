@@ -19,5 +19,7 @@ public class MappingProfile: Profile
         CreateMap<Product, ProductDetailDto>()
             .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Name : null))
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null));
+
+        CreateMap<ProductCreateDto, Product>();
     }
 }
