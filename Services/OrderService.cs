@@ -43,4 +43,14 @@ public class OrderService : IOrderService
 
         return order;
     }
+    
+    public async Task<List<Order>> GetUserOrdersAsync(int userId)
+    {
+        return await _context.Orders
+            .Where(o => o.UserId == userId)
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+    }
 }

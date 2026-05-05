@@ -21,5 +21,10 @@ public class MappingProfile: Profile
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null));
 
         CreateMap<ProductCreateDto, Product>();
+
+        CreateMap<Order, OrderResponseDto>();
+        CreateMap<OrderItem, OrderItemDto>()
+            .ForMember(dest => dest.ProductName, opt => opt
+            .MapFrom(src => src.Product.Name));
     }
 }
