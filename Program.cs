@@ -10,6 +10,14 @@ using System.IdentityModel.Tokens.Jwt;
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy.WithOrigins("http://localhost:5173") // Порт твого Vite
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -83,6 +91,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowReactApp");
 app.UseAuthentication(); 
 app.UseAuthorization();
 
