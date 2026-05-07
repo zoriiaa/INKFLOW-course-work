@@ -103,6 +103,29 @@ namespace INKFLOW.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("INKFLOW.Models.Favourite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Favourites");
+                });
+
             modelBuilder.Entity("INKFLOW.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -272,6 +295,25 @@ namespace INKFLOW.Migrations
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("INKFLOW.Models.Favourite", b =>
+                {
+                    b.HasOne("INKFLOW.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("INKFLOW.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("INKFLOW.Models.Order", b =>
