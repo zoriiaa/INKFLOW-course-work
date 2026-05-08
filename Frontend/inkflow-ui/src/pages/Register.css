@@ -1,0 +1,238 @@
+.reg-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.reg-hero {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.reg-panel-left {
+    width: 50%;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reg-content {
+    max-width: 360px; /* Зменшено, щоб форма була компактнішою */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-white {
+    filter: brightness(0) invert(1);
+}
+
+.main-logo {
+    width: 140px; /* Зменшено, щоб не обрізало */
+    margin-bottom: 30px;
+}
+
+.slogan-container {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.slogan-text {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.form-card-white {
+    background-color: #fff;
+    width: 100%;
+    padding: 35px; /* Трохи зменшені внутрішні відступи */
+    box-sizing: border-box;
+}
+
+.input-row {
+    border-bottom: 1px solid #000;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-row label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #ccc;
+    letter-spacing: 1px;
+}
+
+.input-row input {
+    border: none;
+    outline: none;
+    padding: 8px 0;
+    font-size: 13px;
+}
+
+.btn-submit-black {
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.form-footer-txt {
+    text-align: center;
+    font-size: 11px;
+    margin-top: 20px;
+    color: #000;
+}
+
+.reg-panel-right {
+    width: 50%;
+}
+
+.collage-fit {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.footer-black {
+    background-color: #000;
+    padding: 60px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: -1px;
+}
+
+.brand-sub {
+    color: #555;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+/* Контейнер для лого + тексту в центрі */
+.footer-center-content {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Відступ між лого та списком */
+}
+
+.footer-symbol {
+    width: 110px;
+}
+
+.footer-nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-nav-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.footer-right-space {
+    width: 150px;
+}
+
+@media (max-width: 1100px) {
+    .reg-hero { flex-direction: column; height: auto; }
+    .reg-panel-left, .reg-panel-right { width: 100%; }
+    .reg-panel-right { height: 500px; }
+    .footer-black { flex-direction: column; gap: 40px; text-align: center; }
+    .footer-center-content { flex-direction: column; }
+    .footer-nav-menu { align-items: center; }
+}
+
+.reg-panel-right {
+    position: relative; /* Це "якір" для тексту */
+    width: 50%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+.collage-author-tag {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Сповіщення у правому кутку */
+.registration-toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background-color: #000;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Анімація появи */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Стиль посилання "Вже з нами" */
+.footer-link-main {
+    text-decoration: none;
+    color: #000;
+}
+.footer-link-main:hover {
+    text-decoration: underline;
+}

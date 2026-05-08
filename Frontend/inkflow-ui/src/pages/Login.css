@@ -1,0 +1,254 @@
+.login-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #000;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.login-hero {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.login-panel-left {
+    position: relative;
+    width: 50%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.login-photo-fit {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.login-panel-right {
+    width: 50%;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-content {
+    max-width: 360px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-white {
+    filter: brightness(0) invert(1);
+}
+
+.login-logo {
+    width: 140px;
+    margin-bottom: 30px;
+}
+
+.login-slogan-container {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.login-slogan-text {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 1px;
+}
+
+
+
+.form-card-white {
+    background-color: #fff;
+    width: 100%;
+    padding: 35px;
+    box-sizing: border-box;
+}
+
+.input-row {
+    border-bottom: 1px solid #000;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-row label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #ccc;
+    letter-spacing: 1px;
+}
+
+.input-row input {
+    border: none;
+    outline: none;
+    padding: 8px 0;
+    font-size: 13px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.btn-submit-black {
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: 'Montserrat', sans-serif;
+    transition: background-color 0.2s;
+}
+
+.btn-submit-black:hover {
+    background-color: #222;
+}
+
+.form-footer-txt {
+    text-align: center;
+    font-size: 11px;
+    margin-top: 20px;
+    color: #000;
+}
+
+.footer-link-main {
+    text-decoration: none;
+    color: #000;
+}
+
+.footer-link-main:hover {
+    text-decoration: underline;
+}
+
+
+
+.footer-black {
+    background-color: #000;
+    padding: 60px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: -1px;
+}
+
+.brand-sub {
+    color: #555;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.footer-center-content {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.footer-symbol {
+    width: 110px;
+}
+
+.footer-nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-nav-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.footer-right-space {
+    width: 150px;
+}
+
+/* ===== TOAST СПОВІЩЕННЯ ===== */
+
+.login-toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    padding: 15px 30px;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.login-toast--error {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ===== АДАПТИВ ===== */
+
+@media (max-width: 1100px) {
+    .login-hero {
+        flex-direction: column-reverse; /* форма зверху, фото знизу */
+        height: auto;
+    }
+    .login-panel-left,
+    .login-panel-right {
+        width: 100%;
+    }
+    .login-panel-left {
+        height: 500px;
+    }
+    .footer-black {
+        flex-direction: column;
+        gap: 40px;
+        text-align: center;
+    }
+    .footer-center-content {
+        flex-direction: column;
+    }
+    .footer-nav-menu {
+        align-items: center;
+    }
+}
