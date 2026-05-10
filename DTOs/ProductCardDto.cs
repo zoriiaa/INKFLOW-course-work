@@ -8,4 +8,5 @@ public class ProductCardDto
     public string? ImageUrl { get; set; }
     public string? BrandName { get; set; }  
     public string? CategoryName { get; set; }
+    public int Stock { get; set; }
 }
