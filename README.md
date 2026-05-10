@@ -18,7 +18,7 @@
   * **Framework:** ASP.NET MVC
   * **Database:** PostgreSQL + Entity Framework Core
   * **Mapping:** AutoMapper
-  * **Frontend:** HTML5, CSS3, JavaScript
+  * **Frontend:** React.js, CSS3
   * **Design:** Figma
 
 -----
