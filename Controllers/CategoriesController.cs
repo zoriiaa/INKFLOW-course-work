@@ -18,7 +18,15 @@ public class CategoriesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetCategories()
     {
-        var categories = await _context.Categories.ToListAsync();
+        var categories = await _context.Categories
+            .Select(c => new 
+            { 
+                c.Id, 
+                c.Name, 
+                c.ParentCategoryId 
+            })
+            .ToListAsync();
+
         return Ok(categories);
     }
 }
