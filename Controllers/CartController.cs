@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using INKFLOW.Services.Interfaces;
 
 namespace INKFLOW.Controllers;
@@ -20,31 +19,30 @@ public class CartController : ControllerBase
     [HttpPost("add")]
     public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
     {
-        var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
         
-        
-        await _cartService.AddToCartAsync(int.Parse(userIdStr), productId, quantity);
+        await _cartService.AddToCartAsync(userId.Value, productId, quantity);
         return Ok(new{message = "Товар додано в кошик"});
     }
     
     [HttpGet]
     public async Task<IActionResult> GetMyCart()
     {
-        var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if(string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+        var userId = User.GetUserId();
+        if(userId == null) return Unauthorized();
         
-        var response = await _cartService.GetCartAsync(int.Parse(userIdStr));
+        var response = await _cartService.GetCartAsync(userId.Value);
         return Ok(response);
     }
 
     [HttpPut("quantity")]
     public async Task<IActionResult> SetQuantity(int productId, int quantity)
     {
-        var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
 
-        await _cartService.SetCartItemQuantityAsync(int.Parse(userIdStr), productId, quantity);
+        await _cartService.SetCartItemQuantityAsync(userId.Value, productId, quantity);
         return Ok(new { message = "Кошик оновлено" });
     }
     

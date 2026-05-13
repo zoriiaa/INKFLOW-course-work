@@ -22,18 +22,37 @@ export default function ProductDetails() {
     }, [id]);
 
     const addToCart = async () => {
-        if (!token || !product) return;
+        if (!token) {
+            setToast('Увійдіть, щоб додати в кошик');
+            return;
+        }
+        if (!product) return;
         try {
             const res = await fetch(`${API_BASE}/Cart/add?productId=${product.id}&quantity=1`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
                 },
-                body: '{}',
             });
             if (res.ok) notifyCartChanged();
             setToast(res.ok ? 'Додано в кошик' : 'Помилка додавання');
+        } catch {
+            setToast("Помилка з'єднання");
+        }
+    };
+
+    const addToWishlist = async () => {
+        if (!token) {
+            setToast('Увійдіть, щоб додати у вішліст');
+            return;
+        }
+        if (!product) return;
+        try {
+            const res = await fetch(`${API_BASE}/Favourite/${product.id}`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setToast(res.ok ? 'Додано до вішлісту' : 'Помилка додавання');
         } catch {
             setToast("Помилка з'єднання");
         }
@@ -62,7 +81,10 @@ export default function ProductDetails() {
                                 <div><span>Щільність:</span><strong>{product.density || '—'}</strong></div>
                                 <div><span>Наявність:</span><strong>{product.stock > 0 ? `${product.stock} шт.` : 'Немає'}</strong></div>
                             </div>
-                            <button onClick={addToCart} className="details-buy-btn">ДОДАТИ В КОШИК</button>
+                            <div className="product-details-actions">
+                                <button onClick={addToCart} className="details-buy-btn">ДОДАТИ В КОШИК</button>
+                                <button onClick={addToWishlist} className="details-wish-btn">ДО ВІШЛІСТУ</button>
+                            </div>
                         </div>
                     </div>
                 )}

@@ -17,6 +17,11 @@ public class CartService : ICartService
 
     public async Task AddToCartAsync(int userId, int productId, int quantity)
     {
+        if (quantity <= 0) quantity = 1;
+
+        var productExists = await _context.Products.AnyAsync(p => p.Id == productId);
+        if (!productExists) return;
+
         var existingItem = await _context.CartItems
             .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
 

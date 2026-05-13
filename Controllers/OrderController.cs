@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using INKFLOW.Services.Interfaces;
-using System.Security.Claims;
 using AutoMapper;
 using INKFLOW.DTOs;
-using INKFLOW.Services;
 
 namespace INKFLOW.Controllers;
 
@@ -25,10 +23,10 @@ public class OrderController : ControllerBase
     [HttpPost("checkout")]
     public async Task<IActionResult> Checkout()
     {
-        var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
         
-        var order = await _orderService.CreateOrderAsync(int.Parse(userIdStr));
+        var order = await _orderService.CreateOrderAsync(userId.Value);
         
         if(order == null) return BadRequest("Кошик порожній");
 
@@ -43,12 +41,10 @@ public class OrderController : ControllerBase
     [HttpGet("my-orders")]
     public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GetMyOrders()
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-        if (userIdClaim == null) return Unauthorized("Ви не залогінені!");
-
-        var userId = int.Parse(userIdClaim.Value);
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized("Ви не залогінені!");
         
-        var orders = await _orderService.GetUserOrdersAsync(userId);
+        var orders = await _orderService.GetUserOrdersAsync(userId.Value);
     
         var ordersDto = _mapper.Map<IEnumerable<OrderResponseDto>>(orders);
         return Ok(ordersDto);

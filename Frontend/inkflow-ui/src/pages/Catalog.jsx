@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
 import SearchOverlay from '../components/SearchOverlay.jsx';
@@ -174,14 +174,9 @@ function FilterBlock({ title, children }) {
 
 const Catalog = () => {
     const token = localStorage.getItem('token');
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchTermFromUrl = (searchParams.get('search') || '').trim().toLowerCase();
     const brandFromUrl = (searchParams.get('brand') || '').trim().toLowerCase();
-    const debugRunRef = useRef(`run-${Date.now()}`);
-    const debugLog = useCallback((hypothesisId, location, message, data = {}) => {
-        fetch('http://127.0.0.1:7646/ingest/d9059304-6fa5-450f-9491-0546f361a63c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'64714c'},body:JSON.stringify({sessionId:'64714c',runId:debugRunRef.current,hypothesisId,location,message,data,timestamp:Date.now()})}).catch(()=>{});
-
-    }, []);
 
     const [products, setProducts]     = useState([]);
     const [categories, setCategories] = useState([]);
@@ -203,7 +198,7 @@ const Catalog = () => {
         (async () => {
             try {
                 const [pRes, cRes, bRes] = await Promise.all([
-                    fetch(`${API_BASE}/Products`),
+                    fetch(`${API_BASE}/Products?pageNumber=1&pageSize=500`),
                     fetch(`${API_BASE}/Categories`),
                     fetch(`${API_BASE}/Brands`),
                 ]);
@@ -242,40 +237,6 @@ const Catalog = () => {
         );
         if (matched) setSelectedBrand(matched.id);
     }, [brandFromUrl, brands]);
-
-    useEffect(() => {
-        if (products.length === 0) return;
-        const first = products[0] || {};
-        debugLog(
-            'H1_api_product_shape',
-            'Catalog.jsx:afterProductsLoaded',
-            'Catalog products loaded, checking fields for filtering',
-            {
-                productCount: products.length,
-                firstProductKeys: Object.keys(first),
-                firstProductBrandId: first.brandId ?? null,
-                firstProductCategoryId: first.categoryId ?? null,
-                firstProductColor: first.color ?? null
-            }
-        );
-    }, [products, debugLog]);
-
-    useEffect(() => {
-        if (!selectedColor) return;
-        const nonEmptyProductColors = products
-            .map(p => p.color)
-            .filter(Boolean)
-            .slice(0, 12);
-        debugLog(
-            'H3_color_name_mismatch',
-            'Catalog.jsx:colorSelectionState',
-            'Color filter selected, checking product color values',
-            {
-                selectedColor,
-                sampleProductColors: nonEmptyProductColors
-            }
-        );
-    }, [selectedColor, products, debugLog]);
 
     const handleCategoryToggle = (id, isParent) => {
         setSelectedCategoryIds(prev =>
@@ -317,44 +278,16 @@ const Catalog = () => {
         }
     }, [filteredProducts, sortBy]);
 
-    useEffect(() => {
-        if (loading) return;
-        debugLog(
-            'H4_filter_execution',
-            'Catalog.jsx:filterResultSummary',
-            'Filter result summary after state/data change',
-            {
-                totalProducts: products.length,
-                filteredCount: filteredProducts.length,
-                selectedCategoryIds,
-                selectedBrand,
-                selectedColor
-            }
-        );
-    }, [loading, products.length, filteredProducts.length, selectedCategoryIds, selectedBrand, selectedColor, debugLog]);
-
-    useEffect(() => {
-        if (loading || selectedCategoryIds.length === 0 || categories.length === 0) return;
-        const selectedSet = new Set(selectedCategoryIds);
-        const expanded = expandCategoryIdsForFilter(categories, selectedCategoryIds);
-        const directMatchCount = products.filter(p => selectedSet.has(p.categoryId)).length;
-        const expandedMatchCount = expanded ? products.filter(p => expanded.has(p.categoryId)).length : 0;
-
-        debugLog(
-            'H5_parent_category_descendants',
-            'Catalog.jsx:parentCategoryCoverage',
-            'Compare direct vs full-tree-expanded category matching',
-            {
-                selectedCategoryIds,
-                expandedIdCount: expanded?.size ?? 0,
-                directMatchCount,
-                expandedMatchCount
-            }
-        );
-    }, [loading, selectedCategoryIds, categories, products, debugLog]);
-
     const parentCats = categories.filter(c => !c.parentCategoryId);
     const hasFilters = selectedCategoryIds.length > 0 || selectedBrand || selectedColor || !!searchTermFromUrl;
+
+    const clearFilters = () => {
+        setSelectedCategoryIds([]);
+        setExpandedParents([]);
+        setSelectedBrand(null);
+        setSelectedColor(null);
+        setSearchParams({});
+    };
 
     return (
         <div className="catalog-page">
@@ -477,12 +410,7 @@ const Catalog = () => {
                         </span>
                         <div className="catalog-toolbar__right">
                             {hasFilters && (
-                                <button className="clear-all-btn" onClick={() => {
-                                    setSelectedCategoryIds([]);
-                                    setExpandedParents([]);
-                                    setSelectedBrand(null);
-                                    setSelectedColor(null);
-                                }}>
+                                <button className="clear-all-btn" onClick={clearFilters}>
                                     Скинути фільтри ×
                                 </button>
                             )}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
@@ -59,9 +58,7 @@ const Wishlist = () => {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
                 },
-                body: '{}',
             });
             if (res.ok) {
                 notifyCartChanged();

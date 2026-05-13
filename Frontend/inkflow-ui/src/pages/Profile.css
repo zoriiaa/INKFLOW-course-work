@@ -86,6 +86,16 @@
     font-weight: 700;
 }
 
+.profile-form button:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
+.profile-loading {
+    color: #555;
+    font-weight: 600;
+}
+
 .profile-toast {
     position: fixed;
     right: 18px;
@@ -93,4 +103,11 @@
     background: #111;
     color: #fff;
     padding: 9px 12px;
+    z-index: 9999;
+}
+
+.profile-toast--error {
+    background: #fff;
+    color: #000;
+    border: 1px solid #000;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import homePhoto from '../assets/images/HomePhoto.svg';
+import logo from '../assets/images/Logo.svg';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 
@@ -21,8 +22,6 @@ import './Home.css';
 const Home = () => {
     return (
         <div className="home-page">
-            <SiteHeader showSearch={false} />
-
             {/* ===== HERO ===== */}
             <section className="hero">
                 <div className="hero-photo-side">
@@ -30,6 +29,7 @@ const Home = () => {
                 </div>
 
                 <div className="hero-content-side">
+                    <img src={logo} alt="INKFLOW" className="hero-logo logo-white" />
                     <h1 className="hero-title">
                         ПРОФЕСІЙНІ<br />
                         МАТЕРІАЛИ ДЛЯ<br />
@@ -49,6 +49,8 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            <SiteHeader showSearch={false} />
 
             <section className="brands-section">
                 <div className="brands-header">
