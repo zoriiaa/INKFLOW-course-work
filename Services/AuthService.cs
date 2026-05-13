@@ -54,13 +54,60 @@ public class AuthService : IAuthService
         return GenerateJwtToken(user);
     }
 
+    public async Task<UserProfileDto?> GetProfileAsync(int userId)
+    {
+        return await _context.Users
+            .Where(u => u.Id == userId)
+            .Select(u => new UserProfileDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Email = u.Email
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<(UserProfileDto? Profile, string? Token, string? Error)> UpdateProfileAsync(int userId, UserProfileUpdateDto updateDto)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null) return (null, null, "Користувача не знайдено");
+
+        var email = updateDto.Email.Trim();
+        var username = updateDto.Username.Trim();
+
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(username))
+            return (null, null, "Email та ім'я обов'язкові");
+
+        var emailTaken = await _context.Users
+            .AnyAsync(u => u.Id != userId && u.Email.ToLower() == email.ToLower());
+        if (emailTaken) return (null, null, "Користувач з таким Email вже існує");
+
+        user.Email = email;
+        user.Username = username;
+
+        if (!string.IsNullOrWhiteSpace(updateDto.Password))
+        {
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updateDto.Password);
+        }
+
+        await _context.SaveChangesAsync();
+
+        return (new UserProfileDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email
+        }, GenerateJwtToken(user), null);
+    }
+
     private string GenerateJwtToken(User user)
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Name, user.Username),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim("nameid", user.Id.ToString())
         };
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
