@@ -1,6 +1,3 @@
-/* =============================================
-   HOME.CSS — INKFLOW
-   ============================================= */
 
 .home-page {
     width: 100%;
@@ -11,10 +8,6 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-/* =============================================
-   STICKY HEADER
-   З'являється тільки після прокрутки повз hero-лого
-   ============================================= */
 
 .site-header {
     position: fixed;
@@ -24,7 +17,6 @@
     z-index: 1000;
     background-color: #000;
 
-    /* Прихований стан */
     opacity: 0;
     transform: translateY(-100%);
     pointer-events: none;
@@ -89,9 +81,6 @@
     opacity: 0.6;
 }
 
-/* =============================================
-   HERO
-   ============================================= */
 
 .hero {
     display: flex;
@@ -100,7 +89,6 @@
     background-color: #000;
 }
 
-/* Ліва частина — фото */
 .hero-photo-side {
     width: 55%;
     height: 100%;
@@ -115,19 +103,18 @@
     display: block;
 }
 
-/* Права частина — лого + текст */
 .hero-content-side {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;        /* по центру */
+    align-items: center;
     text-align: center;
     padding: 60px 60px 60px 70px;
 }
 
 .hero-logo {
-    width: 190px;               /* трохи більше */
+    width: 190px;
     margin-bottom: 40px;
 }
 
@@ -154,7 +141,6 @@
     text-align: center;
 }
 
-/* Стрілка вниз — з'їжджає вгору при ховері */
 .hero-scroll-arrow {
     color: rgba(255, 255, 255, 0.5);
     display: flex;
@@ -166,14 +152,12 @@
     position: relative;
 }
 
-/* Анімація боунс вниз-вгору — привертає увагу */
 .hero-scroll-arrow svg {
     animation: arrowBounce 1.8s ease-in-out infinite;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .hero-scroll-arrow:hover svg {
-    /* При ховері — вислизає вгору */
     transform: translateY(-120%);
     opacity: 0;
 }
@@ -183,9 +167,7 @@
     50%       { transform: translateY(6px); }
 }
 
-/* =============================================
-   BRANDS SECTION
-   ============================================= */
+
 
 .brands-section {
     padding: 80px 80px 60px;
@@ -213,11 +195,6 @@
     margin: 0;
 }
 
-/* Сітка брендів — точно як у макеті:
-   [ Manuscript ] [ Sakura+Faber ] [ Posca span 2 rows ]
-   [ Copic      ] [ Sakura+Faber ] [ Posca span 2 rows ]
-*/
-
 .brands-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -225,13 +202,11 @@
     gap: 8px;
 }
 
-/* Manuscript — колонка 1, рядок 1 */
 .brand-card--manuscript {
     grid-column: 1;
     grid-row: 1;
 }
 
-/* Середня колонка — колонка 2, span 2 рядки */
 .brand-card-column {
     grid-column: 2;
     grid-row: 1 / span 2;
@@ -240,19 +215,16 @@
     gap: 8px;
 }
 
-/* POSCA — колонка 3, span 2 рядки */
 .brand-card--posca {
     grid-column: 3;
     grid-row: 1 / span 2;
 }
 
-/* COPIC — колонка 1, рядок 2 */
 .brand-card--copic {
     grid-column: 1;
     grid-row: 2;
 }
 
-/* ===== КАРТОЧКА БРЕНДУ ===== */
 
 .brand-card {
     position: relative;
@@ -264,15 +236,13 @@
     background-color: transparent;
 }
 
-/* Великі картки заповнюють grid-клітинку повністю */
 .brand-card--large {
     height: 100%;
 }
 
-/* Картки у середній колонці — рівно половина */
 .brand-card--half {
     flex: 1;
-    height: 0; /* flex розтягне через flex:1 */
+    height: 0;
 }
 
 .brand-card-photo {
@@ -280,7 +250,6 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    /* Прибираємо opacity у спокої — фото нормальне, темніє на hover */
     opacity: 1;
     transition: transform 0.5s ease, opacity 0.3s ease;
 }
@@ -290,7 +259,6 @@
     opacity: 0.65;
 }
 
-/* Лого бренду поверх фото — окремий файл зображення */
 .brand-card-logo-img {
     position: absolute;
     top: 50%;
@@ -308,7 +276,6 @@
     transform: translate(-50%, -50%) scale(1.06);
 }
 
-/* Якщо лого кольорове (не треба інвертувати) — додай клас .no-invert */
 .brand-card-logo-img.no-invert {
     filter: none;
 }
@@ -319,14 +286,13 @@
     margin-top: 50px;
 }
 
-/* Кнопка — чорна за замовчуванням, при ховері стає білою з чорною рамкою */
 .btn-outline-black {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     border: 1.5px solid #000;
-    background-color: #000;    /* чорна за КД */
-    color: #fff;               /* білий текст за КД */
+    background-color: #000;
+    color: #fff;
     padding: 18px 50px;
     font-size: 13px;
     font-weight: 800;
@@ -339,11 +305,10 @@
 }
 
 .btn-outline-black:hover {
-    background-color: #fff;    /* при ховері — білий фон */
-    color: #000;               /* чорний текст */
+    background-color: #fff;
+    color: #000;
 }
 
-/* Стрілка всередині кнопки — рухається вправо при ховері */
 .btn-arrow {
     display: inline-block;
     transition: transform 0.25s ease;
@@ -353,9 +318,6 @@
     transform: translateX(5px);
 }
 
-/* =============================================
-   FOOTER — такий самий як в Login/Register
-   ============================================= */
 
 .footer-black {
     background-color: #000;
@@ -419,9 +381,6 @@
     width: 150px;
 }
 
-/* =============================================
-   RESPONSIVE
-   ============================================= */
 
 @media (max-width: 1100px) {
     .hero {

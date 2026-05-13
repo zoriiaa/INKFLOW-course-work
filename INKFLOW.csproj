@@ -86,4 +86,9 @@
       <Folder Include="wwwroot\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="et --hard 0f16852" />
+      <None Remove="Show" />
+    </ItemGroup>
+
 </Project>
