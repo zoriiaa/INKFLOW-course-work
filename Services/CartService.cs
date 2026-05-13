@@ -40,10 +40,26 @@ public class CartService : ICartService
             {
                 ProductId = c.ProductId,
                 ProductName = c.Product.Name,
+                ImageUrl = c.Product.ImageUrl,
                 Price = c.Product.Price,
                 Quantity = c.Quantity
             }).ToListAsync();
 
         return new CartResponseDto { Items = items };
+    }
+
+    public async Task SetCartItemQuantityAsync(int userId, int productId, int quantity)
+    {
+        var existingItem = await _context.CartItems
+            .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
+
+        if (existingItem == null) return;
+
+        if (quantity <= 0)
+            _context.CartItems.Remove(existingItem);
+        else
+            existingItem.Quantity = quantity;
+
+        await _context.SaveChangesAsync();
     }
 }

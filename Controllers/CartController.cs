@@ -37,6 +37,16 @@ public class CartController : ControllerBase
         var response = await _cartService.GetCartAsync(int.Parse(userIdStr));
         return Ok(response);
     }
+
+    [HttpPut("quantity")]
+    public async Task<IActionResult> SetQuantity(int productId, int quantity)
+    {
+        var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+        await _cartService.SetCartItemQuantityAsync(int.Parse(userIdStr), productId, quantity);
+        return Ok(new { message = "Кошик оновлено" });
+    }
     
 }
 
