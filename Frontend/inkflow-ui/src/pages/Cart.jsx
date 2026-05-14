@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
-import './Cart.css';
+import '../styles/Cart.css';
 
 const API_BASE = 'http://localhost:5275/api';
 
@@ -164,7 +164,6 @@ const Cart = () => {
                                 {checkoutLoading ? 'ОФОРМЛЮЄМО...' : 'ОФОРМИТИ ЗАМОВЛЕННЯ'}
                             </button>
                             <Link to="/catalog" className="continue-shopping">Продовжити покупки</Link>
-                            <Link to="/orders" className="continue-shopping continue-shopping--secondary">Мої замовлення</Link>
                         </aside>
                     </div>
                 )}

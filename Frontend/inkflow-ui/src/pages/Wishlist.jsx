@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
-import './Wishlist.css';
+import '../styles/Wishlist.css';
 
 const API_BASE = 'http://localhost:5275/api';
 

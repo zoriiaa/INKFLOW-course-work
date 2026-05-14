@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
 import loginPhoto from '../assets/images/LoginPhoto.svg';
-import './Login.css';
+import '../styles/Login.css';
 
 const Login = () => {
     const [formData, setFormData] = useState({

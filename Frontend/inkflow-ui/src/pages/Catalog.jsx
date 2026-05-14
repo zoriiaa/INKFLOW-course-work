@@ -4,7 +4,7 @@ import logo from '../assets/images/Logo.svg';
 import SearchOverlay from '../components/SearchOverlay.jsx';
 import '../components/SearchOverlay.css';
 import { notifyCartChanged } from '../utils/cartEvents.js';
-import './Catalog.css';
+import '../styles/Catalog.css';
 
 const API_BASE = 'http://localhost:5275/api';
 

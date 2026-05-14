@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import AccountSidebar from '../components/AccountSidebar.jsx';
-import './Orders.css';
+import '../styles/Orders.css';
 
 const API_BASE = 'http://localhost:5275/api';
 
@@ -26,6 +26,10 @@ export default function Orders() {
             .finally(() => setLoading(false));
     }, [token]);
 
+    const itemPrice = (item) => {
+        return Number(item.priceAtPurchase ?? item.priceAtTime ?? 0);
+    };
+
     return (
         <div className="orders-page">
             <SiteHeader />
@@ -43,7 +47,9 @@ export default function Orders() {
                                     <div className="order-card__head">
                                         <div>
                                             <strong>Замовлення №{order.id}</strong>
-                                            <div>{new Date(order.orderDate).toLocaleDateString('uk-UA')}</div>
+                                            <div className="order-card__date">
+                                                {new Date(order.orderDate).toLocaleDateString('uk-UA')}
+                                            </div>
                                         </div>
                                         <div className="order-card__meta">
                                             <span className="order-card__status">{order.status}</span>
@@ -60,13 +66,15 @@ export default function Orders() {
                                                     }
                                                 </Link>
                                                 <div className="order-item__body">
-                                                    <Link to={`/product/${item.productId}`} className="order-item__name">{item.productName}</Link>
+                                                    <Link to={`/product/${item.productId}`} className="order-item__name">
+                                                        {item.productName}
+                                                    </Link>
                                                     <span className="order-item__qty-price">
-                                                        Кількість: {item.quantity} × {item.priceAtPurchase}₴
+                                                        Кількість: {item.quantity} × {itemPrice(item)}₴
                                                     </span>
                                                 </div>
                                                 <span className="order-item__line-total">
-                                                    {(Number(item.quantity) * Number(item.priceAtPurchase)).toFixed(0)}₴
+                                                    {(Number(item.quantity) * itemPrice(item)).toFixed(0)}₴
                                                 </span>
                                             </div>
                                         ))}

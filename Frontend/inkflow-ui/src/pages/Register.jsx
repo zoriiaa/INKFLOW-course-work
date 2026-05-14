@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
 import collage from '../assets/images/Collage.svg';
-import './Register.css';
+import '../styles/Register.css';
 
 const Register = () => {
     const [showToast, setShowToast] = useState(false);

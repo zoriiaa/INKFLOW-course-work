@@ -7,7 +7,7 @@ import sakuraPhoto from '../assets/images/brands/SakuraPhoto.svg';
 import copicPhoto from '../assets/images/brands/CopicPhoto.svg';
 import faberPhoto from '../assets/images/brands/FaberCastellPhoto.svg';
 import poscaPhoto from '../assets/images/brands/PoscaPhoto.svg';
-import './Brands.css';
+import '../styles/Brands.css';
 
 const BRAND_CARDS = [
     { name: 'Manuscript', image: manuscriptPhoto, text: 'Британський бренд для каліграфії та графіки.' },

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import homePhoto from '../assets/images/HomePhoto.svg';
 import logo from '../assets/images/Logo.svg';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
+import '../styles/Home.css';
 
 import manuscriptPhoto from '../assets/images/brands/ManuscriptPhoto.svg';
 import sakuraPhoto     from '../assets/images/brands/SakuraPhoto.svg';
@@ -17,18 +18,35 @@ import copicLogo       from '../assets/images/brands/CopicLogo.svg';
 import faberLogo       from '../assets/images/brands/FaberCastellLogo.svg';
 import poscaLogo       from '../assets/images/brands/PoscaLogo.svg';
 
-import './Home.css';
+
 
 const Home = () => {
+    const heroLogoRef = useRef(null);
+    const [headerVisible, setHeaderVisible] = useState(false);
+
+    useEffect(() => {
+        const el = heroLogoRef.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setHeaderVisible(!entry.isIntersecting);
+            },
+            { threshold: 0 }
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <div className="home-page">
-            {/* ===== HERO ===== */}
             <section className="hero">
                 <div className="hero-photo-side">
                     <img src={homePhoto} alt="Sketching" className="hero-photo" />
                 </div>
 
-                <div className="hero-content-side">
+                <div className="hero-content-side" ref={heroLogoRef}>
                     <img src={logo} alt="INKFLOW" className="hero-logo logo-white" />
                     <h1 className="hero-title">
                         ПРОФЕСІЙНІ<br />
@@ -50,7 +68,9 @@ const Home = () => {
                 </div>
             </section>
 
-            <SiteHeader showSearch={false} />
+            <div className={`site-header${headerVisible ? ' site-header--visible' : ''}`}>
+                <SiteHeader showSearch={false} />
+            </div>
 
             <section className="brands-section">
                 <div className="brands-header">

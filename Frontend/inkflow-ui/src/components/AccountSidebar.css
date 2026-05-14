@@ -3,7 +3,7 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
     height: fit-content;
     background: #fff;
 }
@@ -17,6 +17,7 @@
     align-items: center;
     justify-content: center;
     font-size: 28px;
+    margin-bottom: 4px;
 }
 
 .account-sidebar__name {
@@ -27,15 +28,23 @@
 .account-sidebar__email {
     font-size: 14px;
     color: #666;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .account-sidebar__link {
     text-decoration: none;
     color: #000;
-    border: 1px solid #000;
-    padding: 9px 12px;
+    padding: 10px 12px;
     font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.15s;
+}
+
+.account-sidebar__link:hover {
+    background: #f5f5f5;
 }
 
 .account-sidebar__link--active {
@@ -43,7 +52,14 @@
     color: #fff;
 }
 
+.account-sidebar__link--active:hover {
+    background: #222;
+}
+
 .account-sidebar__link--danger {
-    border-color: #a40000;
     color: #a40000;
+}
+
+.account-sidebar__link--danger:hover {
+    background: #fff5f5;
 }

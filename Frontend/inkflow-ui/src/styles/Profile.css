@@ -1,0 +1,132 @@
+.profile-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-wrap {
+    max-width: 1320px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 34px 30px 72px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 20px;
+}
+
+.profile-main {
+    border: 1px solid #ececec;
+    padding: 26px;
+}
+
+.profile-main h1 {
+    margin-top: 0;
+}
+
+.profile-form {
+    display: grid;
+    gap: 10px;
+}
+
+.profile-form label {
+    font-weight: 700;
+}
+
+.profile-form input {
+    border: 1px solid #dfdfdf;
+    padding: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-password-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.profile-password-wrap input {
+    padding-right: 44px;
+}
+
+.profile-eye-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.profile-eye-btn:hover {
+    color: #000;
+}
+
+.profile-form button[type="submit"] {
+    margin-top: 12px;
+    max-width: 320px;
+    border: none;
+    background: #000;
+    color: #fff;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-weight: 900;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: background 0.2s;
+}
+
+.profile-form button[type="submit"]:hover {
+    background: #222;
+}
+
+.profile-form button[type="submit"]:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.profile-loading {
+    color: #555;
+    font-weight: 600;
+}
+
+.profile-catalog-toast {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    padding: 15px 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    z-index: 9999;
+    border: 1px solid;
+    animation: profileSlideIn 0.3s ease-out;
+}
+
+.profile-catalog-toast--success {
+    background: #000;
+    color: #fff;
+    border-color: #555;
+}
+
+.profile-catalog-toast--error {
+    background: #fff;
+    color: #000;
+    border-color: #000;
+}
+
+@keyframes profileSlideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}

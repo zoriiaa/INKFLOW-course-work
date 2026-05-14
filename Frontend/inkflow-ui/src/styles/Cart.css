@@ -130,6 +130,8 @@
 
 .cart-summary h2 {
     margin-top: 0;
+    font-size: 24px;
+    font-weight: 700;
 }
 
 .summary-row {
@@ -139,7 +141,7 @@
 }
 
 .summary-row.total {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
 }
 
