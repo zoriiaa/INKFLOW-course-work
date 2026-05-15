@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
@@ -17,6 +17,77 @@ function Toast({ message, type, onClose }) {
             {message}
         </div>
     );
+}
+
+function MagnifierImage({ src, alt }) {
+    const containerRef = useRef(null);
+    const lensRef = useRef(null);
+    const [active, setActive] = useState(false);
+    const [lensStyle, setLensStyle] = useState({});
+    const [bgStyle, setBgStyle] = useState({});
+    const ZOOM = 2.5;
+    const LENS_SIZE = 120;
+
+    const handleMouseMove = useCallback((e) => {
+        const container = containerRef.current;
+        const img = container.querySelector('img');
+        if (!img) return;
+        const rect = img.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+
+        const half = LENS_SIZE / 2;
+        const lensX = Math.max(half, Math.min(x, rect.width - half));
+        const lensY = Math.max(half, Math.min(y, rect.height - half));
+
+        const bgX = (lensX / rect.width) * 100;
+        const bgY = (lensY / rect.height) * 100;
+
+        setLensStyle({
+            left: lensX - half + 'px',
+            top: lensY - half + 'px',
+        });
+        setBgStyle({
+            backgroundImage: `url(${src})`,
+            backgroundSize: `${rect.width * ZOOM}px ${rect.height * ZOOM}px`,
+            backgroundPosition: `${bgX}% ${bgY}%`,
+        });
+    }, [src]);
+
+    const handleMouseEnter = () => setActive(true);
+    const handleMouseLeave = () => setActive(false);
+
+    return (
+        <div
+            ref={containerRef}
+            className="pd-magnifier-container"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onMouseMove={handleMouseMove}
+        >
+            <img src={src} alt={alt} className={active ? 'pd-img-zooming' : ''} />
+            {active && (
+                <div
+                    ref={lensRef}
+                    className="pd-magnifier-lens"
+                    style={{ ...lensStyle, ...bgStyle }}
+                />
+            )}
+        </div>
+    );
+}
+
+function buildSpecs(product) {
+    const specs = [];
+
+    if (product.color)         specs.push({ label: 'Колір',           value: product.color });
+    if (product.thickness)     specs.push({ label: 'Товщина',         value: `${product.thickness} мм` });
+    if (product.density)       specs.push({ label: 'Щільність',       value: `${product.density} г/м²` });
+    if (product.hardness)      specs.push({ label: 'Твердість',       value: product.hardness });
+    if (product.size)          specs.push({ label: 'Розмір / К-сть',  value: product.size });
+    if (product.specification) specs.push({ label: 'Специфікація',    value: product.specification });
+
+    return specs;
 }
 
 export default function ProductDetails() {
@@ -38,10 +109,7 @@ export default function ProductDetails() {
     }, [id]);
 
     const addToCart = async () => {
-        if (!token) {
-            showToast('Увійдіть, щоб додати в кошик', 'error');
-            return;
-        }
+        if (!token) { showToast('Увійдіть, щоб додати в кошик', 'error'); return; }
         if (!product) return;
         setCartLoading(true);
         try {
@@ -59,10 +127,7 @@ export default function ProductDetails() {
     };
 
     const toggleWish = async () => {
-        if (!token) {
-            showToast('Увійдіть, щоб додати у вішліст', 'error');
-            return;
-        }
+        if (!token) { showToast('Увійдіть, щоб додати у вішліст', 'error'); return; }
         if (!product) return;
         try {
             const method = inWish ? 'DELETE' : 'POST';
@@ -79,14 +144,7 @@ export default function ProductDetails() {
         }
     };
 
-    const specs = product ? [
-        product.color      && { label: 'Колір',        value: product.color },
-        product.thickness  && { label: 'Товщина',      value: `${product.thickness} мм` },
-        product.density    && { label: 'Щільність',    value: `${product.density} г/м²` },
-        product.hardness   && { label: 'Твердість',    value: product.hardness },
-        product.size       && { label: 'Розмір',       value: product.size },
-        product.specification && { label: 'Специфікація', value: product.specification },
-    ].filter(Boolean) : [];
+    const specs = product ? buildSpecs(product) : [];
 
     return (
         <div className="product-details-page">
@@ -98,7 +156,7 @@ export default function ProductDetails() {
                     <div className="product-details-card">
                         <div className="product-details-image">
                             {product.imageUrl
-                                ? <img src={product.imageUrl} alt={product.name} />
+                                ? <MagnifierImage src={product.imageUrl} alt={product.name} />
                                 : <div className="pd-no-img">Немає фото</div>
                             }
                             <button
@@ -121,7 +179,7 @@ export default function ProductDetails() {
 
                             {specs.length > 0 && (
                                 <div className="product-specs">
-                                    <h3>Специфікація</h3>
+                                    <h3>Характеристики</h3>
                                     {specs.map(s => (
                                         <div key={s.label}>
                                             <span>{s.label}</span>
