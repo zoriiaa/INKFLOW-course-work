@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import logo from '../assets/images/Logo.svg';
 import SearchOverlay from '../components/SearchOverlay.jsx';
 import '../components/SearchOverlay.css';
 import { notifyCartChanged } from '../utils/cartEvents.js';
 import '../styles/Catalog.css';
+import SiteHeader from '../components/SiteHeader.jsx';
+import SiteFooter from '../components/SiteFooter.jsx';
 
 const API_BASE = 'http://localhost:5275/api';
 
@@ -109,6 +110,7 @@ function ProductCard({ p, token, showToast }) {
     const available = p.stock > 0;
 
     return (
+
         <div className="product-card">
             <Link to={`/product/${p.id}`} className="product-card__image-link">
                 {p.imageUrl
@@ -291,44 +293,7 @@ const Catalog = () => {
 
     return (
         <div className="catalog-page">
-
-            <header className="cat-header">
-                <div className="cat-header__inner">
-                    <Link to="/home">
-                        <img src={logo} className="cat-header__logo logo-white" alt="INKFLOW" />
-                    </Link>
-                    <nav className="cat-header__nav">
-                        <Link to="/catalog">КАТАЛОГ</Link>
-                        <Link to="/brands">БРЕНДИ</Link>
-                        <Link to="/about">ПРО НАС</Link>
-                    </nav>
-                    <div className="cat-header__icons">
-                        <button className="icon-btn" aria-label="Пошук" onClick={() => setSearchOpen(true)}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                            </svg>
-                        </button>
-                        <Link to="/wishlist" className="icon-btn" aria-label="Вішліст">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                            </svg>
-                        </Link>
-                        <Link to="/cart" className="icon-btn cart-icon-btn" aria-label="Кошик">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                            </svg>
-                            {cartCount > 0 && <span className="cart-count-badge">{cartCount}</span>}
-                        </Link>
-                        <Link to={token ? '/profile' : '/login'} className="icon-btn" aria-label="Профіль">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                            </svg>
-                        </Link>
-                    </div>
-                </div>
-            </header>
-
+            <SiteHeader />
             <div className="catalog-body">
 
                 {/* SIDEBAR */}
@@ -456,23 +421,9 @@ const Catalog = () => {
                         </div>
                     )}
                 </main>
-            </div>
 
-            <footer className="footer-black">
-                <div className="footer-left-group">
-                    <h2 className="brand-name">INKFLOW</h2>
-                    <span className="brand-sub">KYIV 2026</span>
-                </div>
-                <div className="footer-center-content">
-                    <img src={logo} alt="INKFLOW" className="logo-white footer-symbol" />
-                    <nav className="footer-nav-menu">
-                        <Link to="/catalog">КАТАЛОГ</Link>
-                        <Link to="/brands">БРЕНДИ</Link>
-                        <Link to="/about">ПРО НАС</Link>
-                    </nav>
-                </div>
-                <div className="footer-right-space" />
-            </footer>
+            </div>
+            <SiteFooter />
 
             {searchOpen && (
                 <SearchOverlay products={products} onClose={() => setSearchOpen(false)} />

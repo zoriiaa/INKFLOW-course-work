@@ -58,7 +58,6 @@ export default function SiteHeader({ showSearch = true }) {
 
                     <nav className="site-top-header__nav">
                         <Link to="/catalog">КАТАЛОГ</Link>
-                        <Link to="/brands">БРЕНДИ</Link>
                         <Link to="/about">ПРО НАС</Link>
                     </nav>
 

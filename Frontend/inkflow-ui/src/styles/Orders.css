@@ -14,27 +14,6 @@
     gap: 20px;
 }
 
-.orders-side {
-    border: 1px solid #ececec;
-    padding: 18px;
-    height: fit-content;
-    display: grid;
-    gap: 8px;
-}
-
-.orders-side-link {
-    text-decoration: none;
-    color: #000;
-    border: 1px solid #000;
-    padding: 10px 12px;
-    font-weight: 700;
-}
-
-.orders-side-link--active {
-    background: #000;
-    color: #fff;
-}
-
 .orders-main {
     border: 1px solid #ececec;
     padding: 26px;
@@ -60,15 +39,74 @@
     align-items: flex-start;
 }
 
+.order-card__date {
+    font-size: 13px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.order-card__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
 .order-card__status {
-    color: #2f8d46;
+    font-weight: 400;
+    font-size: 13px;
+    color: #329547;
+}
+
+.order-card__total-bold {
     font-weight: 700;
+    font-size: 18px;
+    color: #000;
 }
 
 .order-items {
     display: grid;
     gap: 8px;
     margin-top: 12px;
+}
+
+.order-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+
+.order-item a {
+    color: #000;
+    text-decoration: none;
+}
+
+.order-item__thumb-link {
+    flex-shrink: 0;
+}
+
+.order-item__thumb {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #f9f9f9;
+    object-fit: contain;
+    display: block;
+}
+
+.order-item__thumb--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ececec;
+    color: #ccc;
+    font-size: 20px;
+}
+
+.order-item__body {
+    flex: 1;
 }
 
 .order-item__name {
@@ -86,60 +124,9 @@
     display: block;
 }
 
-.order-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px; /* відступ між фото і текстом */
-    margin-bottom: 20px;
-}
-
-.order-item a {
-    color: #000;
-    text-decoration: none;
-}
-
-.order-item__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;    /* Щоб фото заповнювало квадрат без деформації */
-    display: block;
-}
-
-.order-card__total {
-    font-weight: 700;
-    font-size: 18px;
-    display: block;
-
-}
-.order-item__line-total{
+.order-item__line-total {
     font-weight: 400;
-}
-.order-card__status {
-    font-weight: 400;
-    font-size: 13px;
-    margin-bottom: 5px;
-    color: #329547;
-}
-
-.order-card__info-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* притискаємо до правого краю */
-}
-
-.order-item__thumb {
-    width: 60px;          /* Фіксована ширина як на макеті */
-    height: 60px;         /* Робимо квадратним */
-    flex-shrink: 0;       /* Щоб не стискалося флексом */
-    overflow: hidden;
-    background: #f9f9f9;
-}
-
-.order-item__thumb--empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #ececec;
-    color: #ccc;
-    font-size: 20px;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
 }

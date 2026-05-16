@@ -8,7 +8,6 @@ import Cart from './pages/Cart.jsx';
 import Wishlist from './pages/Wishlist.jsx';
 import Profile from './pages/Profile.jsx';
 import Orders from './pages/Orders.jsx';
-import Brands from './pages/Brands.jsx';
 import ProductDetails from './pages/ProductDetails.jsx';
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/register" element={<Register/>} />
                 <Route path="/home" element={<Home/>} />
-                <Route path="/brands" element={<Brands/>} />
                 <Route path="/wishlist" element={<Wishlist/>} />
                 <Route path="/cart" element={<Cart/>} />
                 <Route path="/profile" element={<Profile/>} />

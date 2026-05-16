@@ -53,7 +53,7 @@ export default function Orders() {
                                         </div>
                                         <div className="order-card__meta">
                                             <span className="order-card__status">{order.status}</span>
-                                            <span className="order-card__total-inline">{order.totalPrice}₴</span>
+                                            <span className="order-card__total-bold">{order.totalPrice}₴</span>
                                         </div>
                                     </div>
                                     <div className="order-items">
