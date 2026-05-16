@@ -82,6 +82,22 @@ public class ProductService : IProductService
         await _context.SaveChangesAsync();
         return true;
     }
+    
+    public async Task<bool> UpdateProductAsync(int id, ProductCreateDto dto)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null) return false;
+        
+        product.Name = dto.Name;
+        product.Description = dto.Description;
+        product.Price = dto.Price;
+        product.ImageUrl = dto.ImageUrl;
+        product.CategoryId = dto.CategoryId;
+        product.BrandId = dto.BrandId;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
    
 }

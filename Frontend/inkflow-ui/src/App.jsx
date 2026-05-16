@@ -9,6 +9,8 @@ import Wishlist from './pages/Wishlist.jsx';
 import Profile from './pages/Profile.jsx';
 import Orders from './pages/Orders.jsx';
 import ProductDetails from './pages/ProductDetails.jsx';
+import About from './pages/About.jsx';
+import Admin from './pages/AdminPanel.jsx';
 
 function App() {
     return (
@@ -24,6 +26,8 @@ function App() {
                 <Route path="/orders" element={<Orders/>} />
                 <Route path="/product/:id" element={<ProductDetails/>} />
                 <Route path="/" element={<Navigate to="/home" />} />
+                <Route path="/about" element={<About/>} />
+                <Route path="/admin" element={<Admin/>} />
             </Routes>
         </Router>
     );

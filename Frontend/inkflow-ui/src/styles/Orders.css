@@ -130,3 +130,20 @@
     color: #333;
     white-space: nowrap;
 }
+
+.status-badge {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.status-badge--комплектується {
+    color: #2a5fc9;
+}
+
+.status-badge--виконано {
+    color: #1e6e3a;
+}
+
+.status-badge--скасовано {
+    color: #b03030;
+}

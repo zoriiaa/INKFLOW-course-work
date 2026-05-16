@@ -1,0 +1,353 @@
+
+.about-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    font-family: 'Montserrat', sans-serif;
+    color: #000;
+}
+
+
+.about-hero {
+    position: relative;
+    min-height: calc(100vh - 62px);
+    background: #000;
+    display: flex;
+    align-items: flex-end;
+    padding: 80px 80px 80px;
+    overflow: hidden;
+}
+
+.about-hero__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+}
+
+.about-hero__label {
+    color: #555;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+}
+
+.about-hero__title {
+    color: #fff;
+    font-size: clamp(36px, 6vw, 80px);
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -1px;
+    margin: 0 0 36px;
+}
+
+.about-hero__sub {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: clamp(14px, 1.4vw, 18px);
+    font-weight: 400;
+    line-height: 1.75;
+    margin: 0;
+    max-width: 480px;
+}
+
+.about-hero__deco {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    pointer-events: none;
+    z-index: 1;
+    user-select: none;
+}
+
+.about-hero__deco-word {
+    display: block;
+    font-size: clamp(100px, 14vw, 200px);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.06);
+    line-height: 0.88;
+    letter-spacing: -4px;
+}
+
+
+.about-mission {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 640px;
+}
+
+.about-mission__text {
+    padding: 80px 80px 80px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid #ececec;
+}
+
+.about-mission__eyebrow {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 24px;
+}
+
+.about-mission__body {
+    font-size: clamp(16px, 1.6vw, 22px);
+    font-weight: 600;
+    line-height: 1.6;
+    color: #000;
+    margin: 0 0 20px;
+}
+
+.about-mission__body--light {
+    font-size: clamp(13px, 1.2vw, 16px);
+    font-weight: 400;
+    color: #666;
+}
+
+.about-mission__line {
+    width: 48px;
+    height: 2px;
+    background: #000;
+    margin: 28px 0;
+}
+
+.about-mission__stat {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+}
+
+.about-mission__num {
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1;
+    color: #000;
+    letter-spacing: -2px;
+}
+
+.about-mission__stat-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+    max-width: 100px;
+    line-height: 1.4;
+}
+
+.about-mission__photo-wrap {
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+}
+
+.about-mission__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.about-mission__photo-caption {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+
+.about-values {
+    padding: 80px 80px;
+    background: #f9f9f9;
+}
+
+.about-values__eyebrow {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 48px;
+}
+
+.about-values__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: #ececec;
+    border: 1px solid #ececec;
+}
+
+.about-values__card {
+    background: #fff;
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: background 0.2s;
+}
+
+.about-values__card:hover {
+    background: #f9f9f9;
+}
+
+.about-values__num {
+    font-size: 56px;
+    font-weight: 900;
+    color: #ececec;
+    line-height: 1;
+    letter-spacing: -2px;
+    display: block;
+}
+
+.about-values__heading {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #000;
+    margin: 0;
+}
+
+.about-values__desc {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: #666;
+    margin: 0;
+}
+
+.about-values__desc strong {
+    color: #000;
+    font-weight: 700;
+}
+
+
+.about-quote {
+    background: #000;
+    padding: 100px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    transition: background 0.4s ease;
+}
+
+.about-quote:hover {
+    background: #0d0d0d;
+}
+
+.about-quote__inner {
+    text-align: center;
+    max-width: 800px;
+    transition: transform 0.4s ease;
+}
+
+.about-quote:hover .about-quote__inner {
+    transform: scale(1.025);
+}
+
+.about-quote__mark {
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.06);
+    line-height: 0.6;
+    display: block;
+    margin-bottom: 16px;
+    font-family: Georgia, serif;
+}
+
+.about-quote__text {
+    font-size: clamp(24px, 3.5vw, 44px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin: 0 0 24px;
+    transition: color 0.4s ease, opacity 0.4s ease;
+}
+
+.about-quote:hover .about-quote__text {
+    color: #fff;
+    opacity: 1;
+    text-shadow: 0 0 60px rgba(255, 255, 255, 0.15);
+}
+
+.about-quote__source {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #555;
+    transition: color 0.4s ease;
+}
+
+.about-quote:hover .about-quote__source {
+    color: #777;
+}
+
+
+@media (max-width: 1100px) {
+    .about-hero {
+        padding: 60px 40px;
+    }
+    .about-mission__text {
+        padding: 60px 40px;
+    }
+    .about-values {
+        padding: 60px 40px;
+    }
+    .about-quote {
+        padding: 80px 40px;
+    }
+}
+
+@media (max-width: 860px) {
+    .about-mission {
+        grid-template-columns: 1fr;
+    }
+    .about-mission__text {
+        border-right: none;
+        border-bottom: 1px solid #ececec;
+    }
+    .about-mission__photo-wrap {
+        min-height: 400px;
+    }
+    .about-values__grid {
+        grid-template-columns: 1fr;
+    }
+    .about-hero__deco {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .about-hero {
+        padding: 40px 24px 60px;
+        min-height: auto;
+    }
+    .about-mission__text {
+        padding: 40px 24px;
+    }
+    .about-values {
+        padding: 40px 24px;
+    }
+    .about-values__card {
+        padding: 32px 24px;
+    }
+    .about-quote {
+        padding: 60px 24px;
+    }
+}

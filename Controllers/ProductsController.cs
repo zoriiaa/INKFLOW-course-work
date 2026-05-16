@@ -51,4 +51,13 @@ public class ProductsController : ControllerBase
         if (!deleted) return NotFound("Такого товару нема");
         return Ok(new { message = "Видалили!" });
     }
+    
+    [HttpPut("admin/{id}")] 
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductCreateDto dto)
+    {
+        var updated = await _productService.UpdateProductAsync(id, dto);
+        if (!updated) return NotFound(new { message = "Товар не знайдено" });
+
+        return Ok(new { message = "Товар успішно оновлено!" });
+    }
 }

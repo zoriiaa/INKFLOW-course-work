@@ -52,7 +52,9 @@ export default function Orders() {
                                             </div>
                                         </div>
                                         <div className="order-card__meta">
-                                            <span className="order-card__status">{order.status}</span>
+                                            <span className={`order-card__status status-badge status-badge--${order.status.toLowerCase()}`}>
+    {order.status}
+</span>
                                             <span className="order-card__total-bold">{order.totalPrice}₴</span>
                                         </div>
                                     </div>

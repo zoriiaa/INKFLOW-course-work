@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './AccountSidebar.css';
 
 function parseJwt(token) {
@@ -12,13 +12,21 @@ function parseJwt(token) {
 }
 
 export default function AccountSidebar({ active }) {
+    const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const claims = useMemo(() => parseJwt(token || ''), [token]);
+
     const name = claims.unique_name || claims.name || 'Customer';
     const email = claims.email || '';
 
+    const role = claims['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+        || claims.role
+        || '';
+    const isAdmin = role === 'Admin';
+
     const logout = () => {
         localStorage.removeItem('token');
+        navigate('/login'); // Щоб після логауту юзера викидало на логін
     };
 
     const isOrdersActive = active === 'orders';
@@ -56,7 +64,17 @@ export default function AccountSidebar({ active }) {
                 </svg>
                 Профіль
             </Link>
-
+            {isAdmin && (
+                <Link
+                    to="/admin"
+                    className={`account-sidebar__link${active === 'admin' ? ' account-sidebar__link--active' : ''}`}
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    Адмін-панель
+                </Link>
+            )}
             <Link to="/login" className="account-sidebar__link account-sidebar__link--danger" onClick={logout}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
