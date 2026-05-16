@@ -94,6 +94,7 @@ public class ProductService : IProductService
         product.ImageUrl = dto.ImageUrl;
         product.CategoryId = dto.CategoryId;
         product.BrandId = dto.BrandId;
+        product.Stock = dto.Stock;
 
         await _context.SaveChangesAsync();
         return true;

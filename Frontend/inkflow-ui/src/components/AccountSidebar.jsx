@@ -26,7 +26,7 @@ export default function AccountSidebar({ active }) {
 
     const logout = () => {
         localStorage.removeItem('token');
-        navigate('/login'); // Щоб після логауту юзера викидало на логін
+        navigate('/login');
     };
 
     const isOrdersActive = active === 'orders';

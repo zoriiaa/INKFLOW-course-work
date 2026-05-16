@@ -2,6 +2,30 @@ import React from 'react';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import '../styles/About.css';
+import SakuraLogo from '../assets/images/brands/SakuraLogo.svg';
+import PoscaLogo from '../assets/images/brands/PoscaLogo.svg';
+import ManuscriptLogo from '../assets/images/brands/ManuscriptLogo.svg';
+import KohINoorLogo from '../assets/images/brands/KohINoorLogo.svg';
+import FaberCastellLogo from '../assets/images/brands/FaberCastellLogo.svg';
+import CopicLogo from '../assets/images/brands/CopicLogo.svg';
+import CarandacheLogo from '../assets/images/brands/CarandacheLogo.svg';
+import DerwentLogo from '../assets/images/brands/DerwentLogo.svg';
+import FabrianoLogo from '../assets/images/brands/FabrianoLogo.svg';
+import RotringLogo from '../assets/images/brands/RotringLogo.svg';
+
+
+const partnerLogos = [
+    { name: 'Sakura', src: SakuraLogo },
+    { name: 'Posca', src: PoscaLogo },
+    { name: 'Manuscript', src: ManuscriptLogo },
+    { name: 'Koh-I-Noor', src: KohINoorLogo },
+    { name: 'Faber-Castell', src: FaberCastellLogo },
+    { name: 'Copic', src: CopicLogo },
+    { name: 'Carandache', src: CarandacheLogo },
+    { name: 'Derwent', src: DerwentLogo },
+    { name: 'Fabriano', src: FabrianoLogo },
+    { name: 'Rotring', src: RotringLogo },
+];
 
 export default function About() {
     return (
@@ -49,13 +73,21 @@ export default function About() {
                         <span className="about-mission__stat-label">преміальних брендів</span>
                     </div>
                 </div>
-                <div className="about-mission__photo-wrap">
-                    <img
-                        src="/about_collage.jpg"
-                        alt="INKFLOW — скетчинг та каліграфія"
-                        className="about-mission__photo"
-                    />
-                    <div className="about-mission__photo-caption">by @zoroo.art</div>
+            </section>
+
+            <section className="about-partners" aria-label="Наші партнери">
+                <div className="about-partners__header">
+                    <span>НАШІ ПАРТНЕРИ</span>
+                    <span>БРЕНДИ, ЯКІ МИ ОБИРАЄМО</span>
+                </div>
+                <div className="about-partners__marquee">
+                    <div className="about-partners__track">
+                        {[...partnerLogos, ...partnerLogos].map((brand, index) => (
+                            <div className="about-partners__item" key={`${brand.name}-${index}`}>
+                                <img src={brand.src} alt={brand.name} className="about-partners__logo" />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
@@ -66,7 +98,7 @@ export default function About() {
                         <span className="about-values__num">01</span>
                         <h3 className="about-values__heading">ЯКІСТЬ</h3>
                         <p className="about-values__desc">
-                            Архівна стійкість чорнил — не вицвітає роками.
+                            Архівна стійкість чорнил - не вицвітає роками.
                             Матеріали, яким можна довіряти найважливіші роботи.
                         </p>
                     </div>
@@ -83,7 +115,6 @@ export default function About() {
                         <h3 className="about-values__heading">СПІЛЬНОТА</h3>
                         <p className="about-values__desc">
                             Підтримка локальних українських художників та авторів.
-                            Серед тих, кого ми поважаємо — <strong>@zoroo.art</strong>.
                         </p>
                     </div>
                 </div>
@@ -93,9 +124,9 @@ export default function About() {
                 <div className="about-quote__inner">
                     <div className="about-quote__mark" aria-hidden="true">"</div>
                     <blockquote className="about-quote__text">
-                        Чорнила течуть — мистецтво залишається.
+                        Життя коротке, мистецтво — вічне
                     </blockquote>
-                    <div className="about-quote__source">— INKFLOW, KYIV 2026</div>
+                    <div className="about-quote__source">— Гіппократ</div>
                 </div>
             </section>
 

@@ -203,7 +203,6 @@ namespace INKFLOW.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Hardness")

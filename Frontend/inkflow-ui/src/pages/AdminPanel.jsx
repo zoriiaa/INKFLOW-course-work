@@ -4,6 +4,17 @@ import '../styles/AdminPanel.css';
 
 const API_BASE = 'http://localhost:5275/api';
 
+const formatPrice = (value) => `${Number(value || 0).toLocaleString('uk-UA')} грн`;
+
+const getCustomerName = (order) => {
+    return order.username
+        || order.userName
+        || order.user?.username
+        || order.user?.name
+        || order.userEmail?.split('@')[0]
+        || 'Без імені';
+};
+
 function getRoleFromToken(token) {
     try {
         const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
@@ -52,10 +63,10 @@ function ProductsSection({ token, showToast }) {
             ]);
             if (resCat.ok) setCategories(await resCat.json());
             if (resBrand.ok) setBrands(await resBrand.json());
-        } catch (err) {
-            console.error(err);
+        } catch {
+            showToast('Не вдалося завантажити категорії або бренди', 'error');
         }
-    }, []);
+    }, [showToast]);
 
     useEffect(() => {
         Promise.all([fetchProducts(), fetchMeta()]).finally(() => setLoading(false));
@@ -80,7 +91,7 @@ function ProductsSection({ token, showToast }) {
             };
 
             if (editingProduct) {
-                const res = await fetch(`${API_BASE}/Admin/products/${editingProduct.id}`, {
+                const res = await fetch(`${API_BASE}/Products/admin/${editingProduct.id}`, {
                     method: 'PUT',
                     headers,
                     body: JSON.stringify(bodyData)
@@ -131,7 +142,7 @@ function ProductsSection({ token, showToast }) {
             </h2>
             <form className="ap-form" onSubmit={handleSubmit}>
                 <div className="ap-form__grid">
-                    <div className="ap-form__group ap-form__group--span-2">
+                    <div className="ap-form__group ap-form__group--span-4">
                         <label className="ap-form__label">Назва товару</label>
                         <input type="text" name="name" className="ap-form__input" placeholder="Наприклад: Блокнот на спіралі" required value={form.name} onChange={handleChange} />
                     </div>
@@ -143,14 +154,14 @@ function ProductsSection({ token, showToast }) {
                         <label className="ap-form__label">Кількість</label>
                         <input type="number" name="stock" className="ap-form__input" placeholder="10" required value={form.stock} onChange={handleChange} />
                     </div>
-                    <div className="ap-form__group ap-form__group--span-2">
+                    <div className="ap-form__group">
                         <label className="ap-form__label">Категорія</label>
                         <select name="categoryId" className="ap-form__select" required value={form.categoryId} onChange={handleChange}>
                             <option value="">Оберіть категорію</option>
                             {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
-                    <div className="ap-form__group ap-form__group--span-2">
+                    <div className="ap-form__group">
                         <label className="ap-form__label">Бренд</label>
                         <select name="brandId" className="ap-form__select" required value={form.brandId} onChange={handleChange}>
                             <option value="">Оберіть бренд</option>
@@ -173,12 +184,11 @@ function ProductsSection({ token, showToast }) {
                     {editingProduct && (
                         <button
                             type="button"
-                            className="ap-btn"
+                            className="ap-btn ap-btn--cancel"
                             onClick={() => {
                                 setEditingProduct(null);
                                 setForm({ name: '', description: '', price: '', imageUrl: '', categoryId: '', brandId: '', stock: '10' });
                             }}
-                            style={{ marginLeft: '12px', background: '#fff', color: '#000', border: '1px solid #e5e5e5' }}
                         >
                             Скасувати
                         </button>
@@ -362,6 +372,7 @@ function OrdersSection({ token, showToast }) {
                         <th>Покупець</th>
                         <th>Дата</th>
                         <th>Товари</th>
+                        <th>Сума</th>
                         <th>Статус замовлення</th>
                     </tr>
                     </thead>
@@ -369,30 +380,36 @@ function OrdersSection({ token, showToast }) {
                     {orders.map(o => (
                         <tr key={o.id}>
                             <td>{o.id}</td>
-                            <td>{o.userEmail || (o.user && o.user.email)}</td>
+                            <td>
+                                <strong>{getCustomerName(o)}</strong>
+                                <span className="ap-table__muted">{o.userEmail}</span>
+                            </td>
                             <td>{new Date(o.orderDate).toLocaleDateString()}</td>
                             <td>
-                                {o.orderItems && o.orderItems.map(item => (
-                                    <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                                        {item.product?.imageUrl ? (
-                                            <img src={item.product.imageUrl} alt="" className="ap-table__img" style={{ width: '30px', height: '30px' }} />
+                                <div className="ap-order-items">
+                                    {o.orderItems && o.orderItems.map((item, index) => (
+                                        <div key={`${o.id}-${item.productId}-${index}`} className="ap-order-item">
+                                        {item.imageUrl ? (
+                                            <img src={item.imageUrl} alt="" className="ap-order-item__img" />
                                         ) : (
-                                            <span className="ap-table__no-img" style={{ width: '30px', height: '30px', lineBreak: 'anywhere', fontSize: '10px', lineHigh: '28px' }}>—</span>
+                                            <span className="ap-order-item__no-img">—</span>
                                         )}
-                                        <span style={{ fontSize: '12px' }}>{item.product?.name} <strong>x{item.quantity}</strong></span>
+                                        <span className="ap-order-item__name">{item.productName}</span>
+                                        <strong className="ap-order-item__qty">x{item.quantity}</strong>
                                     </div>
-                                ))}
+                                    ))}
+                                </div>
                             </td>
+                            <td><strong>{formatPrice(o.totalPrice)}</strong></td>
                             <td>
                                 <select
                                     className="ap-form__select"
-                                    style={{ padding: '6px 12px', width: 'auto' }}
-                                    value={o.status === 'Processing' ? 'Processing' : o.status === 'Cancelled' ? 'Cancelled' : 'Completed'}
+                                    value={o.status || 'Комплектується'}
                                     onChange={(e) => handleStatusChange(o.id, e.target.value)}
                                 >
-                                    <option value="Processing">Комплектується</option>
-                                    <option value="Cancelled">Скасовано</option>
-                                    <option value="Completed">Виконано</option>
+                                    <option value="Комплектується">Комплектується</option>
+                                    <option value="Скасовано">Скасовано</option>
+                                    <option value="Виконано">Виконано</option>
                                 </select>
                             </td>
                         </tr>

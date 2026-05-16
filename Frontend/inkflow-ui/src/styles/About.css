@@ -168,6 +168,78 @@
 }
 
 
+.about-partners {
+    background: #fff;
+    border-top: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+    overflow: hidden;
+}
+
+.about-partners__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 18px 80px;
+    border-bottom: 1px solid #ececec;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #aaa;
+}
+
+.about-partners__marquee {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.about-partners__track {
+    display: inline-flex;
+    align-items: center;
+    min-width: max-content;
+    animation: aboutPartnersMarquee 30s linear infinite;
+}
+
+.about-partners:hover .about-partners__track {
+    animation-play-state: paused;
+}
+
+.about-partners__item {
+    width: 220px;
+    height: 112px;
+    padding: 32px 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #ececec;
+}
+
+.about-partners__logo {
+    max-width: 100%;
+    max-height: 48px;
+    display: block;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.62;
+    transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+}
+
+.about-partners__item:hover .about-partners__logo {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+@keyframes aboutPartnersMarquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+
 .about-values {
     padding: 80px 80px;
     background: #f9f9f9;
@@ -309,6 +381,9 @@
     .about-values {
         padding: 60px 40px;
     }
+    .about-partners__header {
+        padding: 18px 40px;
+    }
     .about-quote {
         padding: 80px 40px;
     }
@@ -343,6 +418,16 @@
     }
     .about-values {
         padding: 40px 24px;
+    }
+    .about-partners__header {
+        padding: 16px 24px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .about-partners__item {
+        width: 180px;
+        height: 96px;
+        padding: 28px 34px;
     }
     .about-values__card {
         padding: 32px 24px;
