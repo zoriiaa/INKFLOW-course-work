@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
-import collage from '../assets/images/Collage.svg';
+import collage from '../assets/images/Collage.png';
 import '../styles/Register.css';
+import SiteFooter from '../components/SiteFooter.jsx';
 
 const Register = () => {
     const [showToast, setShowToast] = useState(false);
@@ -26,10 +27,10 @@ const Register = () => {
                 body: JSON.stringify(formData)
             });
             if (response.ok) {
-                setShowToast(true); // Показуємо сповіщення
+                setShowToast(true); 
                 setTimeout(() => {
                     setShowToast(false);
-                    navigate('/'); // Після реєстрації кидає на головну
+                    navigate('/'); 
                 }, 3000);
             } else {
                 const error = await response.text();
@@ -103,26 +104,8 @@ const Register = () => {
                 </div>
             </main>
 
-            <footer className="footer-black">
-                <div className="footer-left-group">
-                    <h2 className="brand-name">INKFLOW</h2>
-                    <span className="brand-sub">KYIV 2026</span>
-                </div>
-
-                {/* Лого та навігація тепер поруч */}
-                <div className="footer-center-content">
-                    <img src={logo} alt="INKFLOW" className="logo-white footer-symbol" />
-                    <nav className="footer-nav-menu">
-                        <Link to="/catalog">КАТАЛОГ</Link>
-                        <Link to="/brands">БРЕНДИ</Link>
-                        <Link to="/about">ПРО НАС</Link>
-                    </nav>
-                </div>
-
-                {/* Правий бік порожній для балансу як на макеті */}
-                <div className="footer-right-space"></div>
-            </footer>
-
+            
+<SiteFooter />
             {showToast && (
                 <div className="registration-toast">
                     Успішно зареєстровано!

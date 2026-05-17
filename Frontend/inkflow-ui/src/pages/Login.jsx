@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
 import loginPhoto from '../assets/images/LoginPhoto.svg';
 import '../styles/Login.css';
+import SiteFooter from '../components/SiteFooter.jsx';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -44,8 +45,7 @@ const Login = () => {
                 <div className="login-panel-left">
                     <img src={loginPhoto} alt="Art" className="login-photo-fit" />
                 </div>
-
-                {/* Права панель — форма */}
+                
                 <div className="login-panel-right">
                     <div className="login-content">
 
@@ -98,23 +98,7 @@ const Login = () => {
                 </div>
             </main>
 
-            <footer className="footer-black">
-                <div className="footer-left-group">
-                    <h2 className="brand-name">INKFLOW</h2>
-                    <span className="brand-sub">KYIV 2026</span>
-                </div>
-
-                <div className="footer-center-content">
-                    <img src={logo} alt="INKFLOW" className="logo-white footer-symbol" />
-                    <nav className="footer-nav-menu">
-                        <Link to="/catalog">КАТАЛОГ</Link>
-                        <Link to="/brands">БРЕНДИ</Link>
-                        <Link to="/about">ПРО НАС</Link>
-                    </nav>
-                </div>
-
-                <div className="footer-right-space"></div>
-            </footer>
+           <SiteFooter/>
 
             {showError && (
                 <div className="login-toast login-toast--error">

@@ -14,7 +14,6 @@ export default function SiteFooter() {
                 <img src={logo} alt="INKFLOW" className="logo-white site-footer-symbol" />
                 <nav className="site-footer-nav-menu">
                     <Link to="/catalog">КАТАЛОГ</Link>
-                    <Link to="/brands">БРЕНДИ</Link>
                     <Link to="/about">ПРО НАС</Link>
                 </nav>
             </div>
