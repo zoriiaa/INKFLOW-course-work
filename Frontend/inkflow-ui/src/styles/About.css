@@ -1,4 +1,3 @@
-
 .about-page {
     min-height: 100vh;
     display: flex;
@@ -8,14 +7,13 @@
     color: #000;
 }
 
-
 .about-hero {
     position: relative;
     min-height: calc(100vh - 62px);
     background: #000;
     display: flex;
     align-items: flex-end;
-    padding: 80px 80px 80px;
+    padding: 80px;
     overflow: hidden;
 }
 
@@ -59,7 +57,6 @@
     transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: 0;
     pointer-events: none;
     z-index: 1;
     user-select: none;
@@ -77,61 +74,65 @@
 
 
 .about-mission {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 640px;
+    padding: 80px;
+    border-bottom: 1px solid #ececec;
 }
 
-.about-mission__text {
-    padding: 80px 80px 80px 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-right: 1px solid #ececec;
-}
-
-.about-mission__eyebrow {
+.about-mission__label {
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: #aaa;
-    margin-bottom: 24px;
+    margin-bottom: 48px;
+}
+
+.about-mission__layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+}
+
+.about-mission__headline {
+    font-size: clamp(22px, 2.4vw, 36px);
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    color: #000;
+    margin: 0;
+    position: sticky;
+    top: 120px;
+}
+
+.about-mission__right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .about-mission__body {
-    font-size: clamp(16px, 1.6vw, 22px);
-    font-weight: 600;
-    line-height: 1.6;
-    color: #000;
-    margin: 0 0 20px;
-}
-
-.about-mission__body--light {
-    font-size: clamp(13px, 1.2vw, 16px);
+    font-size: 16px;
     font-weight: 400;
-    color: #666;
-}
-
-.about-mission__line {
-    width: 48px;
-    height: 2px;
-    background: #000;
-    margin: 28px 0;
+    line-height: 1.8;
+    color: #555;
+    margin: 0;
 }
 
 .about-mission__stat {
     display: flex;
     align-items: baseline;
-    gap: 14px;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #ececec;
 }
 
 .about-mission__num {
-    font-size: 56px;
+    font-size: 64px;
     font-weight: 900;
     line-height: 1;
     color: #000;
-    letter-spacing: -2px;
+    letter-spacing: -3px;
 }
 
 .about-mission__stat-label {
@@ -139,38 +140,14 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: #888;
-    max-width: 100px;
-    line-height: 1.4;
-}
-
-.about-mission__photo-wrap {
-    position: relative;
-    overflow: hidden;
-    min-height: 500px;
-}
-
-.about-mission__photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.about-mission__photo-caption {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 13px;
-    font-weight: 600;
-    pointer-events: none;
+    color: #999;
+    max-width: 140px;
+    line-height: 1.5;
 }
 
 
 .about-partners {
     background: #fff;
-    border-top: 1px solid #ececec;
     border-bottom: 1px solid #ececec;
     overflow: hidden;
 }
@@ -231,17 +208,13 @@
 }
 
 @keyframes aboutPartnersMarquee {
-    from {
-        transform: translateX(0);
-    }
-    to {
-        transform: translateX(-50%);
-    }
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
 }
 
 
 .about-values {
-    padding: 80px 80px;
+    padding: 80px;
     background: #f9f9f9;
 }
 
@@ -372,67 +345,34 @@
 
 
 @media (max-width: 1100px) {
-    .about-hero {
-        padding: 60px 40px;
-    }
-    .about-mission__text {
-        padding: 60px 40px;
-    }
-    .about-values {
-        padding: 60px 40px;
-    }
-    .about-partners__header {
-        padding: 18px 40px;
-    }
-    .about-quote {
-        padding: 80px 40px;
-    }
+    .about-hero { padding: 60px 40px; }
+    .about-mission { padding: 60px 40px; }
+    .about-mission__layout { gap: 48px; }
+    .about-values { padding: 60px 40px; }
+    .about-partners__header { padding: 18px 40px; }
+    .about-quote { padding: 80px 40px; }
 }
 
 @media (max-width: 860px) {
-    .about-mission {
+    .about-mission__layout {
         grid-template-columns: 1fr;
+        gap: 32px;
     }
-    .about-mission__text {
-        border-right: none;
-        border-bottom: 1px solid #ececec;
+    .about-mission__headline {
+        position: static;
+        font-size: clamp(20px, 5vw, 28px);
     }
-    .about-mission__photo-wrap {
-        min-height: 400px;
-    }
-    .about-values__grid {
-        grid-template-columns: 1fr;
-    }
-    .about-hero__deco {
-        display: none;
-    }
+    .about-values__grid { grid-template-columns: 1fr; }
+    .about-hero__deco { display: none; }
 }
 
 @media (max-width: 600px) {
-    .about-hero {
-        padding: 40px 24px 60px;
-        min-height: auto;
-    }
-    .about-mission__text {
-        padding: 40px 24px;
-    }
-    .about-values {
-        padding: 40px 24px;
-    }
-    .about-partners__header {
-        padding: 16px 24px;
-        flex-direction: column;
-        gap: 8px;
-    }
-    .about-partners__item {
-        width: 180px;
-        height: 96px;
-        padding: 28px 34px;
-    }
-    .about-values__card {
-        padding: 32px 24px;
-    }
-    .about-quote {
-        padding: 60px 24px;
-    }
+    .about-hero { padding: 40px 24px 60px; min-height: auto; }
+    .about-mission { padding: 40px 24px; }
+    .about-mission__label { margin-bottom: 28px; }
+    .about-values { padding: 40px 24px; }
+    .about-partners__header { padding: 16px 24px; flex-direction: column; gap: 8px; }
+    .about-partners__item { width: 180px; height: 96px; padding: 28px 34px; }
+    .about-values__card { padding: 32px 24px; }
+    .about-quote { padding: 60px 24px; }
 }

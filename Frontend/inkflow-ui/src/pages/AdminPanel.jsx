@@ -32,6 +32,8 @@ function Toast({ message, type, onClose }) {
     return <div className={`ap-toast ap-toast--${type}`}>{message}</div>;
 }
 
+const emptyForm = { name: '', description: '', price: '', imageUrl: '', categoryId: '', brandId: '', stock: '10' };
+
 function ProductsSection({ token, showToast }) {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -39,11 +41,7 @@ function ProductsSection({ token, showToast }) {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
-
-    const [form, setForm] = useState({
-        name: '', description: '', price: '', imageUrl: '',
-        categoryId: '', brandId: '', stock: '10'
-    });
+    const [form, setForm] = useState(emptyForm);
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -77,14 +75,36 @@ function ProductsSection({ token, showToast }) {
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleEditClick = async (p) => {
+        try {
+            const res = await fetch(`${API_BASE}/Products/${p.id}`);
+            if (!res.ok) throw new Error('Не вдалося завантажити деталі товару');
+            const detail = await res.json();
+            setEditingProduct(detail);
+            setForm({
+                name: detail.name || '',
+                description: detail.description || '',
+                price: detail.price,
+                brandId: String(detail.brandId ?? detail.brand?.id ?? ''),
+                categoryId: String(detail.categoryId ?? detail.category?.id ?? ''),
+                imageUrl: detail.imageUrl || '',
+                stock: detail.stock?.toString() || '10'
+            });
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
         try {
             const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
             const bodyData = {
-                ...form,
+                name: form.name,
+                description: form.description,
                 price: parseFloat(form.price),
+                imageUrl: form.imageUrl,
                 categoryId: parseInt(form.categoryId),
                 brandId: parseInt(form.brandId),
                 stock: parseInt(form.stock) || 0
@@ -108,7 +128,7 @@ function ProductsSection({ token, showToast }) {
                 showToast('Товар успішно додано в базу!', 'success');
             }
 
-            setForm({ name: '', description: '', price: '', imageUrl: '', categoryId: '', brandId: '', stock: '10' });
+            setForm(emptyForm);
             setEditingProduct(null);
             fetchProducts();
         } catch (err) {
@@ -174,7 +194,7 @@ function ProductsSection({ token, showToast }) {
                     </div>
                     <div className="ap-form__group ap-form__group--span-4">
                         <label className="ap-form__label">Опис товару</label>
-                        <textarea name="description" rows="3" className="ap-form__textarea" placeholder="Детальний опис характеристик товару..." required value={form.description} onChange={handleChange} />
+                        <textarea name="description" rows="3" className="ap-form__textarea" placeholder="Детальний опис характеристик товару..." value={form.description} onChange={handleChange} />
                     </div>
                 </div>
                 <div className="ap-form__actions">
@@ -187,7 +207,7 @@ function ProductsSection({ token, showToast }) {
                             className="ap-btn ap-btn--cancel"
                             onClick={() => {
                                 setEditingProduct(null);
-                                setForm({ name: '', description: '', price: '', imageUrl: '', categoryId: '', brandId: '', stock: '10' });
+                                setForm(emptyForm);
                             }}
                         >
                             Скасувати
@@ -222,21 +242,7 @@ function ProductsSection({ token, showToast }) {
                             <td>{p.price} грн</td>
                             <td>
                                 <div className="ap-table__actions">
-                                    <button
-                                        className="ap-btn ap-btn--edit"
-                                        onClick={() => {
-                                            setEditingProduct(p);
-                                            setForm({
-                                                name: p.name,
-                                                description: p.description,
-                                                price: p.price,
-                                                brandId: p.brandId || p.brand?.id || '',
-                                                categoryId: p.categoryId || p.category?.id || '',
-                                                imageUrl: p.imageUrl || '',
-                                                stock: p.stock?.toString() || '10'
-                                            });
-                                        }}
-                                    >
+                                    <button className="ap-btn ap-btn--edit" onClick={() => handleEditClick(p)}>
                                         Редагувати
                                     </button>
                                     <button className="ap-btn ap-btn--danger" onClick={() => handleDelete(p.id)}>Видалити</button>
@@ -325,7 +331,6 @@ function UsersSection({ token, showToast }) {
     );
 }
 
-
 function OrdersSection({ token, showToast }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -389,14 +394,14 @@ function OrdersSection({ token, showToast }) {
                                 <div className="ap-order-items">
                                     {o.orderItems && o.orderItems.map((item, index) => (
                                         <div key={`${o.id}-${item.productId}-${index}`} className="ap-order-item">
-                                        {item.imageUrl ? (
-                                            <img src={item.imageUrl} alt="" className="ap-order-item__img" />
-                                        ) : (
-                                            <span className="ap-order-item__no-img">—</span>
-                                        )}
-                                        <span className="ap-order-item__name">{item.productName}</span>
-                                        <strong className="ap-order-item__qty">x{item.quantity}</strong>
-                                    </div>
+                                            {item.imageUrl ? (
+                                                <img src={item.imageUrl} alt="" className="ap-order-item__img" />
+                                            ) : (
+                                                <span className="ap-order-item__no-img">—</span>
+                                            )}
+                                            <span className="ap-order-item__name">{item.productName}</span>
+                                            <strong className="ap-order-item__qty">x{item.quantity}</strong>
+                                        </div>
                                     ))}
                                 </div>
                             </td>

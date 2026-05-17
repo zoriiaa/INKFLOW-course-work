@@ -74,8 +74,8 @@ function Toast({ message, type, onClose }) {
     );
 }
 
-function ProductCard({ p, token, showToast }) {
-    const [inWish, setInWish] = useState(false);
+function ProductCard({ p, token, showToast, wishlistIds, onWishChange }) {
+    const inWish = wishlistIds.has(p.id);
     const [cartLoading, setCartLoading] = useState(false);
 
     const handleWish = async () => {
@@ -87,7 +87,7 @@ function ProductCard({ p, token, showToast }) {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
-                setInWish(!inWish);
+                onWishChange(p.id, !inWish);
                 showToast(inWish ? 'Видалено з вішлісту' : 'Додано до вішлісту!', inWish ? 'info' : 'success');
             }
         } catch { showToast("Помилка з'єднання", 'error'); }
@@ -110,7 +110,6 @@ function ProductCard({ p, token, showToast }) {
     const available = p.stock > 0;
 
     return (
-
         <div className="product-card">
             <Link to={`/product/${p.id}`} className="product-card__image-link">
                 {p.imageUrl
@@ -186,6 +185,7 @@ const Catalog = () => {
     const [loading, setLoading]       = useState(true);
     const [toast, setToast]           = useState(null);
     const [searchOpen, setSearchOpen] = useState(false);
+    const [wishlistIds, setWishlistIds] = useState(new Set());
 
     const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
     const [expandedParents, setExpandedParents]         = useState([]);
@@ -196,21 +196,40 @@ const Catalog = () => {
 
     const showToast = useCallback((message, type = 'success') => setToast({ message, type }), []);
 
+    const handleWishChange = useCallback((productId, isNowInWish) => {
+        setWishlistIds(prev => {
+            const next = new Set(prev);
+            if (isNowInWish) next.add(productId);
+            else next.delete(productId);
+            return next;
+        });
+    }, []);
+
     useEffect(() => {
         (async () => {
             try {
-                const [pRes, cRes, bRes] = await Promise.all([
+                const fetchArgs = [
                     fetch(`${API_BASE}/Products?pageNumber=1&pageSize=500`),
                     fetch(`${API_BASE}/Categories`),
                     fetch(`${API_BASE}/Brands`),
-                ]);
-                setProducts(await pRes.json());
-                setCategories(await cRes.json());
-                setBrands(await bRes.json());
+                ];
+                if (token) {
+                    fetchArgs.push(
+                        fetch(`${API_BASE}/Favourite`, { headers: { Authorization: `Bearer ${token}` } })
+                    );
+                }
+                const results = await Promise.all(fetchArgs);
+                setProducts(await results[0].json());
+                setCategories(await results[1].json());
+                setBrands(await results[2].json());
+                if (token && results[3]?.ok) {
+                    const favs = await results[3].json();
+                    setWishlistIds(new Set(favs.map(f => f.id)));
+                }
             } catch (e) { console.error(e); }
             finally { setLoading(false); }
         })();
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         const refreshCartCount = () => {
@@ -296,7 +315,6 @@ const Catalog = () => {
             <SiteHeader />
             <div className="catalog-body">
 
-                {/* SIDEBAR */}
                 <aside className="catalog-sidebar">
 
                     <FilterBlock title="КАТЕГОРІЯ">
@@ -367,7 +385,6 @@ const Catalog = () => {
                     </FilterBlock>
                 </aside>
 
-                {/* MAIN */}
                 <main className="catalog-main">
                     <div className="catalog-toolbar">
                         <span className="catalog-count">
@@ -416,7 +433,14 @@ const Catalog = () => {
                     {!loading && sortedProducts.length > 0 && (
                         <div className="products-grid">
                             {sortedProducts.map(p => (
-                                <ProductCard key={p.id} p={p} token={token} showToast={showToast} />
+                                <ProductCard
+                                    key={p.id}
+                                    p={p}
+                                    token={token}
+                                    showToast={showToast}
+                                    wishlistIds={wishlistIds}
+                                    onWishChange={handleWishChange}
+                                />
                             ))}
                         </div>
                     )}
