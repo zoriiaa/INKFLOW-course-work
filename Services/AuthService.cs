@@ -14,7 +14,7 @@ public class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
     
-    public AuthService(AppDbContext context, IConfiguration configuration)
+    public AuthService(AppDbContext context)
     {
         _context = context;
     }
