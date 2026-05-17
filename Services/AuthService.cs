@@ -8,18 +8,15 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-
 namespace INKFLOW.Services;
 
 public class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
-    private readonly IConfiguration _configuration;
     
     public AuthService(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
-        _configuration = configuration;
     }
 
     public async Task<bool> RegisterAsync(UserRegisterDto registerDto)
@@ -28,7 +25,7 @@ public class AuthService : IAuthService
             return false;
 
         string salt = BCrypt.Net.BCrypt.GenerateSalt();
-        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password,salt);
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password, salt);
 
         var user = new User
         {
@@ -36,18 +33,16 @@ public class AuthService : IAuthService
             Email = registerDto.Email,
             PasswordHash = hashedPassword,
             CreatedAt = DateTime.UtcNow
-
         };
         
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return true;
     }
-    
 
     public async Task<string?> LoginAsync(UserLoginDto loginDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u=>u.Email == loginDto.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash)) 
             return null;
@@ -112,12 +107,15 @@ public class AuthService : IAuthService
         };
         
         var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+        var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+        var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            issuer: jwtIssuer,
+            audience: jwtAudience,
             claims: claims,
             expires: DateTime.Now.AddDays(1),
             signingCredentials: creds
