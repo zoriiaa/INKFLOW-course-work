@@ -3,11 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-
-
-appsettings.Development.json
-appsettings.json
-
 # User-specific files
 *.rsuser
 *.suo
@@ -15,8 +10,6 @@ appsettings.json
 *.userosscache
 *.sln.docstates
 *.env
-appsettings.json
-appsettings.Development.json
 
 # JetBrains Rider
 .idea/
