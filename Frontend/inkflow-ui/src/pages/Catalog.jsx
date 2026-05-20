@@ -26,31 +26,6 @@ const COLORS = [
 
 const COLOR_BY_NAME = new Map(COLORS.map(c => [c.name, c]));
 
-function expandCategoryIdsForFilter(categories, selectedIds) {
-    if (!selectedIds.length) return null;
-    const byParent = new Map();
-    for (const c of categories) {
-        const pid = c.parentCategoryId;
-        if (pid == null) continue;
-        if (!byParent.has(pid)) byParent.set(pid, []);
-        byParent.get(pid).push(c.id);
-    }
-    const effective = new Set(selectedIds);
-    const stack = [...selectedIds];
-    while (stack.length) {
-        const id = stack.pop();
-        const kids = byParent.get(id);
-        if (!kids) continue;
-        for (const kid of kids) {
-            if (!effective.has(kid)) {
-                effective.add(kid);
-                stack.push(kid);
-            }
-        }
-    }
-    return effective;
-}
-
 function productMatchesSelectedColor(productColor, selectedSwatchName) {
     if (!selectedSwatchName) return true;
     if (!productColor) return false;
@@ -179,12 +154,12 @@ const Catalog = () => {
     const searchTermFromUrl = (searchParams.get('search') || '').trim().toLowerCase();
     const brandFromUrl = (searchParams.get('brand') || '').trim().toLowerCase();
 
-    const [products, setProducts]     = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [brands, setBrands]         = useState([]);
-    const [loading, setLoading]       = useState(true);
-    const [toast, setToast]           = useState(null);
-    const [searchOpen, setSearchOpen] = useState(false);
+    const [products, setProducts]       = useState([]);
+    const [categories, setCategories]   = useState([]);
+    const [brands, setBrands]           = useState([]);
+    const [loading, setLoading]         = useState(true);
+    const [toast, setToast]             = useState(null);
+    const [searchOpen, setSearchOpen]   = useState(false);
     const [wishlistIds, setWishlistIds] = useState(new Set());
 
     const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
@@ -233,10 +208,7 @@ const Catalog = () => {
 
     useEffect(() => {
         const refreshCartCount = () => {
-            if (!token) {
-                setCartCount(0);
-                return;
-            }
+            if (!token) { setCartCount(0); return; }
             fetch(`${API_BASE}/Cart`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(res => (res.ok ? res.json() : null))
                 .then(data => {
@@ -259,24 +231,20 @@ const Catalog = () => {
         if (matched) setSelectedBrand(matched.id);
     }, [brandFromUrl, brands]);
 
-    const handleCategoryToggle = (id, isParent) => {
+    const handleCategoryToggle = (id) => {
         setSelectedCategoryIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         );
-        if (isParent) {
-            setExpandedParents(prev =>
-                prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-            );
-        }
     };
 
-    const effectiveCategoryIds = useMemo(
-        () => expandCategoryIdsForFilter(categories, selectedCategoryIds),
-        [categories, selectedCategoryIds]
-    );
+    const handleParentExpand = (id) => {
+        setExpandedParents(prev =>
+            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+        );
+    };
 
     const filteredProducts = products.filter(p => {
-        const catOk   = !effectiveCategoryIds || effectiveCategoryIds.has(p.categoryId);
+        const catOk = selectedCategoryIds.length === 0 || selectedCategoryIds.includes(p.categoryId);
         const brandOk = !selectedBrand || p.brandId === selectedBrand;
         const colorOk = productMatchesSelectedColor(p.color, selectedColor);
         const searchOk = !searchTermFromUrl
@@ -288,14 +256,10 @@ const Catalog = () => {
     const sortedProducts = useMemo(() => {
         const list = [...filteredProducts];
         switch (sortBy) {
-            case 'price-asc':
-                return list.sort((a, b) => Number(a.price) - Number(b.price));
-            case 'price-desc':
-                return list.sort((a, b) => Number(b.price) - Number(a.price));
-            case 'name-asc':
-                return list.sort((a, b) => a.name.localeCompare(b.name, 'uk'));
-            default:
-                return list;
+            case 'price-asc':  return list.sort((a, b) => Number(a.price) - Number(b.price));
+            case 'price-desc': return list.sort((a, b) => Number(b.price) - Number(a.price));
+            case 'name-asc':   return list.sort((a, b) => a.name.localeCompare(b.name, 'uk'));
+            default:           return list;
         }
     }, [filteredProducts, sortBy]);
 
@@ -318,38 +282,86 @@ const Catalog = () => {
                 <aside className="catalog-sidebar">
 
                     <FilterBlock title="КАТЕГОРІЯ">
-                        {parentCats.map(parent => (
-                            <div key={parent.id} className="cat-group">
-                                <label className="filter-checkbox">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedCategoryIds.includes(parent.id)}
-                                        onChange={() => handleCategoryToggle(parent.id, true)}
-                                    />
-                                    <span className="filter-checkbox__box" />
-                                    <span className="filter-checkbox__label filter-checkbox__label--bold">{parent.name}</span>
-                                </label>
-                                {expandedParents.includes(parent.id) && (
-                                    <div className="cat-subs">
-                                        {categories
-                                            .filter(sub => sub.parentCategoryId === parent.id)
-                                            .map(sub => (
-                                                <label key={sub.id} className="filter-checkbox">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedCategoryIds.includes(sub.id)}
-                                                        onChange={() => handleCategoryToggle(sub.id, false)}
-                                                    />
-                                                    <span className="filter-checkbox__box" />
-                                                    <span className="filter-checkbox__label">{sub.name}</span>
-                                                </label>
-                                            ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </FilterBlock>
+                        {parentCats.map(parent => {
+                            const isExpanded = expandedParents.includes(parent.id);
 
+                            return (
+                                <div key={parent.id} className="cat-group" style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleParentExpand(parent.id)}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            width: '100%',
+                                            background: 'none',
+                                            border: 'none',
+                                            padding: '10px 0',
+                                            margin: 0,
+                                            cursor: 'pointer',
+                                            textAlign: 'left',
+                                            outline: 'none',
+                                            boxShadow: 'none',
+                                            borderRadius: 0,
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'none',
+                                            appearance: 'none'
+                                        }}
+                                    >
+                                        <span style={{
+                                            fontSize: '15px',
+                                            fontWeight: '700',
+                                            color: '#1E1E1E',
+                                            fontFamily: "'Montserrat', sans-serif",
+                                            userSelect: 'none'
+                                        }}>
+                        {parent.name}
+                    </span>
+                                        
+                                        <svg
+                                            width="14"
+                                            height="14"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            style={{
+                                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                                transition: 'transform .22s ease',
+                                                flexShrink: 0,
+                                                display: 'block'
+                                            }}
+                                        >
+                                            <path
+                                                d="M6 9l6 6 6-6"
+                                                stroke="#1E1E1E"
+                                                strokeWidth="2.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </button>
+                                    
+                                    {isExpanded && (
+                                        <div className="cat-subs">
+                                            {categories
+                                                .filter(sub => sub.parentCategoryId === parent.id)
+                                                .map(sub => (
+                                                    <label key={sub.id} className="filter-checkbox">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedCategoryIds.includes(sub.id)}
+                                                            onChange={() => handleCategoryToggle(sub.id)}
+                                                        />
+                                                        <span className="filter-checkbox__box" />
+                                                        <span className="filter-checkbox__label">{sub.name}</span>
+                                                    </label>
+                                                ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </FilterBlock>
                     <FilterBlock title="БРЕНД">
                         {brands.map(b => (
                             <label key={b.id} className="filter-checkbox">

@@ -1,6 +1,5 @@
-using INKFLOW.Data; 
+using INKFLOW.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace INKFLOW.Controllers;
 
@@ -8,17 +7,17 @@ namespace INKFLOW.Controllers;
 [Route("api/[controller]")]
 public class BrandsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IBrandsService _brandsService;
 
-    public BrandsController(AppDbContext context)
+    public BrandsController(IBrandsService brandsService)
     {
-        _context = context;
+        _brandsService = brandsService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetBrands()
     {
-        var brands = await _context.Brands.ToListAsync();
+        var brands = await _brandsService.GetBrandsAsync();
         return Ok(brands);
     }
 }

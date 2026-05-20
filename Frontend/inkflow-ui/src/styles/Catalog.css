@@ -589,3 +589,28 @@
 @media (max-width: 420px) {
     .products-grid { grid-template-columns: 1fr; }
 }
+
+.catalog-parent-category-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 10px 0;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    transition: opacity 0.2s ease;
+}
+
+.catalog-parent-category-row:hover {
+    opacity: 0.7;
+}
+
+.catalog-parent-category-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1E1E1E;
+    text-transform: none; 
+}

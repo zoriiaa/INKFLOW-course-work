@@ -1,6 +1,5 @@
-using INKFLOW.Data;
+using INKFLOW.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace INKFLOW.Controllers;
 
@@ -8,25 +7,26 @@ namespace INKFLOW.Controllers;
 [Route("api/[controller]")]
 public class CategoriesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ICategoryService _categoryService;
 
-    public CategoriesController(AppDbContext context)
+    public CategoriesController(ICategoryService categoryService)
     {
-        _context = context;
+        _categoryService = categoryService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetCategories()
     {
-        var categories = await _context.Categories
+        var categories = await _categoryService.GetCategoriesAsync();
+        var result = categories
             .Select(c => new 
             { 
                 c.Id, 
                 c.Name, 
                 c.ParentCategoryId 
             })
-            .ToListAsync();
+            .ToList();
 
-        return Ok(categories);
+        return Ok(result);
     }
 }
