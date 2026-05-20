@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminPanel.css';
 
 const API_BASE = 'http://localhost:5275/api';
 
 const formatPrice = (value) => `${Number(value || 0).toLocaleString('uk-UA')} грн`;
+const ORDER_STATUSES = ['Комплектується', 'Скасовано', 'Виконано'];
 
 const getCustomerName = (order) => {
     return order.username
@@ -334,6 +335,7 @@ function UsersSection({ token, showToast }) {
 function OrdersSection({ token, showToast }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState('all');
 
     const fetchOrders = useCallback(async () => {
         try {
@@ -357,6 +359,9 @@ function OrdersSection({ token, showToast }) {
                 body: JSON.stringify({ status: newStatus })
             });
             if (!res.ok) throw new Error('Не вдалося оновити статус');
+            setOrders(prev => prev.map(order =>
+                order.id === id ? { ...order, status: newStatus } : order
+            ));
             showToast('Статус замовлення оновлено!', 'success');
             fetchOrders();
         } catch (err) {
@@ -364,11 +369,37 @@ function OrdersSection({ token, showToast }) {
         }
     };
 
+    const visibleOrders = useMemo(() => {
+        if (statusFilter === 'all') return orders;
+        return orders.filter(order => (order.status || 'Комплектується') === statusFilter);
+    }, [orders, statusFilter]);
+
     if (loading) return <div className="ap-loading">Завантаження...</div>;
 
     return (
         <div className="ap-section">
-            <h2 className="ap-section__title">Замовлення</h2>
+            <div className="ap-section__header">
+                <h2 className="ap-section__title">Замовлення</h2>
+                <div className="ap-order-filters" aria-label="Фільтр замовлень за статусом">
+                    <button
+                        type="button"
+                        className={`ap-order-filter${statusFilter === 'all' ? ' ap-order-filter--active' : ''}`}
+                        onClick={() => setStatusFilter('all')}
+                    >
+                        Усі
+                    </button>
+                    {ORDER_STATUSES.map(status => (
+                        <button
+                            key={status}
+                            type="button"
+                            className={`ap-order-filter${statusFilter === status ? ' ap-order-filter--active' : ''}`}
+                            onClick={() => setStatusFilter(status)}
+                        >
+                            {status}
+                        </button>
+                    ))}
+                </div>
+            </div>
             <div className="ap-table-wrapper">
                 <table className="ap-table">
                     <thead>
@@ -382,7 +413,7 @@ function OrdersSection({ token, showToast }) {
                     </tr>
                     </thead>
                     <tbody>
-                    {orders.map(o => (
+                    {visibleOrders.map(o => (
                         <tr key={o.id}>
                             <td>{o.id}</td>
                             <td>
@@ -412,13 +443,20 @@ function OrdersSection({ token, showToast }) {
                                     value={o.status || 'Комплектується'}
                                     onChange={(e) => handleStatusChange(o.id, e.target.value)}
                                 >
-                                    <option value="Комплектується">Комплектується</option>
-                                    <option value="Скасовано">Скасовано</option>
-                                    <option value="Виконано">Виконано</option>
+                                    {ORDER_STATUSES.map(status => (
+                                        <option key={status} value={status}>{status}</option>
+                                    ))}
                                 </select>
                             </td>
                         </tr>
                     ))}
+                    {visibleOrders.length === 0 && (
+                        <tr>
+                            <td colSpan="6" className="ap-table__empty">
+                                Замовлень з таким статусом немає.
+                            </td>
+                        </tr>
+                    )}
                     </tbody>
                 </table>
             </div>

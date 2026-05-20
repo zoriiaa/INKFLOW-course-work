@@ -108,6 +108,20 @@ export default function ProductDetails() {
             .finally(() => setLoading(false));
     }, [id]);
 
+    useEffect(() => {
+        if (!token || !id) {
+            setInWish(false);
+            return;
+        }
+
+        fetch(`${API_BASE}/Favourite`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => (res.ok ? res.json() : []))
+            .then(favs => {
+                setInWish(Array.isArray(favs) && favs.some(item => String(item.id) === String(id)));
+            })
+            .catch(() => setInWish(false));
+    }, [id, token]);
+
     const addToCart = async () => {
         if (!token) { showToast('Увійдіть, щоб додати в кошик', 'error'); return; }
         if (!product) return;

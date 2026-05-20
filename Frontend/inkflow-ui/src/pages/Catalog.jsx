@@ -284,78 +284,90 @@ const Catalog = () => {
                     <FilterBlock title="КАТЕГОРІЯ">
                         {parentCats.map(parent => {
                             const isExpanded = expandedParents.includes(parent.id);
+                            const childCategories = categories.filter(sub => sub.parentCategoryId === parent.id);
+                            const hasChildren = childCategories.length > 0;
 
                             return (
                                 <div key={parent.id} className="cat-group" style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleParentExpand(parent.id)}
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            width: '100%',
-                                            background: 'none',
-                                            border: 'none',
-                                            padding: '10px 0',
-                                            margin: 0,
-                                            cursor: 'pointer',
-                                            textAlign: 'left',
-                                            outline: 'none',
-                                            boxShadow: 'none',
-                                            borderRadius: 0,
-                                            WebkitAppearance: 'none',
-                                            MozAppearance: 'none',
-                                            appearance: 'none'
-                                        }}
-                                    >
-                                        <span style={{
-                                            fontSize: '15px',
-                                            fontWeight: '700',
-                                            color: '#1E1E1E',
-                                            fontFamily: "'Montserrat', sans-serif",
-                                            userSelect: 'none'
-                                        }}>
-                        {parent.name}
-                    </span>
-                                        
-                                        <svg
-                                            width="14"
-                                            height="14"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
+                                    {hasChildren ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => handleParentExpand(parent.id)}
                                             style={{
-                                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                                                transition: 'transform .22s ease',
-                                                flexShrink: 0,
-                                                display: 'block'
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                width: '100%',
+                                                background: 'none',
+                                                border: 'none',
+                                                padding: '10px 0',
+                                                margin: 0,
+                                                cursor: 'pointer',
+                                                textAlign: 'left',
+                                                outline: 'none',
+                                                boxShadow: 'none',
+                                                borderRadius: 0,
+                                                WebkitAppearance: 'none',
+                                                MozAppearance: 'none',
+                                                appearance: 'none'
                                             }}
                                         >
-                                            <path
-                                                d="M6 9l6 6 6-6"
-                                                stroke="#1E1E1E"
-                                                strokeWidth="2.5"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
+                                            <span style={{
+                                                fontSize: '15px',
+                                                fontWeight: '700',
+                                                color: '#1E1E1E',
+                                                fontFamily: "'Montserrat', sans-serif",
+                                                userSelect: 'none'
+                                            }}>
+                                                {parent.name}
+                                            </span>
+
+                                            <svg
+                                                width="14"
+                                                height="14"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                style={{
+                                                    transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                                    transition: 'transform .22s ease',
+                                                    flexShrink: 0,
+                                                    display: 'block'
+                                                }}
+                                            >
+                                                <path
+                                                    d="M6 9l6 6 6-6"
+                                                    stroke="#1E1E1E"
+                                                    strokeWidth="2.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+                                        </button>
+                                    ) : (
+                                        <label className="filter-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedCategoryIds.includes(parent.id)}
+                                                onChange={() => handleCategoryToggle(parent.id)}
                                             />
-                                        </svg>
-                                    </button>
-                                    
-                                    {isExpanded && (
+                                            <span className="filter-checkbox__box" />
+                                            <span className="filter-checkbox__label filter-checkbox__label--bold">{parent.name}</span>
+                                        </label>
+                                    )}
+
+                                    {hasChildren && isExpanded && (
                                         <div className="cat-subs">
-                                            {categories
-                                                .filter(sub => sub.parentCategoryId === parent.id)
-                                                .map(sub => (
-                                                    <label key={sub.id} className="filter-checkbox">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedCategoryIds.includes(sub.id)}
-                                                            onChange={() => handleCategoryToggle(sub.id)}
-                                                        />
-                                                        <span className="filter-checkbox__box" />
-                                                        <span className="filter-checkbox__label">{sub.name}</span>
-                                                    </label>
-                                                ))}
+                                            {childCategories.map(sub => (
+                                                <label key={sub.id} className="filter-checkbox">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedCategoryIds.includes(sub.id)}
+                                                        onChange={() => handleCategoryToggle(sub.id)}
+                                                    />
+                                                    <span className="filter-checkbox__box" />
+                                                    <span className="filter-checkbox__label">{sub.name}</span>
+                                                </label>
+                                            ))}
                                         </div>
                                     )}
                                 </div>
