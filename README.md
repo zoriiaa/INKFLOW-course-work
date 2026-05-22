@@ -14,7 +14,7 @@
 
 ##  Технологічний стек
 
-  * **Framework:** ASP.NET MVC
+  * **Framework:** ASP.NET Web API
   * **Database:** PostgreSQL + Entity Framework Core
   * **Mapping:** AutoMapper
   * **Frontend:** React.js, CSS3
