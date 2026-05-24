@@ -39,22 +39,6 @@ namespace INKFLOW.Migrations
                     b.ToTable("Brands");
                 });
 
-            modelBuilder.Entity("INKFLOW.Models.Cart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Carts");
-                });
-
             modelBuilder.Entity("INKFLOW.Models.CartItem", b =>
                 {
                     b.Property<int>("Id")
