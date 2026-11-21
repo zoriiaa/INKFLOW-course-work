@@ -77,6 +77,8 @@ public class ProductService : IProductService
     {
         var product = await _context.Products.FindAsync(id);
         if (product == null) return false;
+        var inOrders = await _context.OrderItems.AnyAsync(oi => oi.ProductId == id);
+        if (inOrders) return false;
 
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();

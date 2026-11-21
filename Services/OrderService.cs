@@ -22,6 +22,11 @@ public class OrderService : IOrderService
             .ToListAsync();
 
         if (!cartItems.Any()) return null;
+        foreach (var item in cartItems)
+        {
+            if (item.Quantity > item.Product.Stock) return null;
+            item.Product.Stock -= item.Quantity;
+        }
 
         var order = new Order
         {

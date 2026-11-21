@@ -28,7 +28,7 @@ public class OrderController : ControllerBase
         
         var order = await _orderService.CreateOrderAsync(userId.Value);
         
-        if(order == null) return BadRequest("Кошик порожній");
+        if(order == null) return BadRequest("Кошик порожній, або товару недостатньо на складі");
 
         return Ok(new 
         { 

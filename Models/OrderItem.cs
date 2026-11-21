@@ -1,4 +1,5 @@
 ﻿namespace INKFLOW.Models;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class OrderItem
@@ -11,6 +12,7 @@ public class OrderItem
     [ForeignKey("Product")]
     public int ProductId { get; set; }
     public int Quantity { get; set; }
+    [Precision(10, 2)]
     public decimal PriceAtTime { get; set; }
     
 }

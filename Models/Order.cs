@@ -1,4 +1,6 @@
-﻿namespace INKFLOW.Models;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace INKFLOW.Models;
 
 public enum OrderStatus
 {
@@ -12,6 +14,7 @@ public class Order
     public int UserId { get; set; }
     public User User { get; set; } = null!;
     public DateTime OrderDate { get; set; } =  DateTime.UtcNow;
+    [Precision(10, 2)]
     public decimal TotalPrice { get; set; }
 
     public OrderStatus Status { get; set; } = OrderStatus.Комплектується;

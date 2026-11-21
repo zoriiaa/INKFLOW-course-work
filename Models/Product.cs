@@ -1,12 +1,17 @@
-﻿namespace INKFLOW.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace INKFLOW.Models;
 
 public class Product
 {
     
     public int Id { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
+    [MaxLength(200)]
     public string Name{ get; set; } = string.Empty;
     public string? Description{ get; set; } = string.Empty;
+    [Precision(10, 2)]
     public decimal Price { get; set; }
     public string? Color { get; set; } 
     public int Stock { get; set; }

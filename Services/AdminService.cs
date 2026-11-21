@@ -32,6 +32,7 @@ public class AdminService : IAdminService
 
     public async Task<bool> ChangeRoleAsync(int id, ChangeRoleDto dto)
     {
+        if (dto.Role != "User" && dto.Role != "Admin") return false;
         var user = await _context.Users.FindAsync(id);
         if (user == null) return false;
 
