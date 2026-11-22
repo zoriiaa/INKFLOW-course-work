@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
 import SearchOverlay from './SearchOverlay.jsx';
 import './SiteHeader.css';
-const API_BASE = 'http://localhost:5275/api';
+const API_BASE = '/api';
 
 export default function SiteHeader({ showSearch = true }) {
     const token = localStorage.getItem('token');

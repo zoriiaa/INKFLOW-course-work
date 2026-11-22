@@ -7,7 +7,7 @@ import '../styles/Catalog.css';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 
-const API_BASE = 'http://localhost:5275/api';
+const API_BASE = '/api';
 
 const COLORS = [
     { name: 'Чорний',   hex: '#000000', matchTerms: ['black', 'чорн', 'nero', 'graphite'] },

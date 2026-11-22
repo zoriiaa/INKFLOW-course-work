@@ -1,5 +1,6 @@
 ﻿using INKFLOW.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using INKFLOW.DTOs;
 
 namespace INKFLOW.Controllers;
@@ -37,6 +38,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost("admin/create")] 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateProduct(ProductCreateDto dto)
     {
         
@@ -45,6 +47,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("admin/{id}")] 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
         var deleted = await _productService.DeleteProductAsync(id);
@@ -53,6 +56,7 @@ public class ProductsController : ControllerBase
     }
     
     [HttpPut("admin/{id}")] 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductCreateDto dto)
     {
         var updated = await _productService.UpdateProductAsync(id, dto);

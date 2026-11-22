@@ -97,6 +97,12 @@ public class ProductService : IProductService
         product.CategoryId = dto.CategoryId;
         product.BrandId = dto.BrandId;
         product.Stock = dto.Stock;
+        product.Thickness = dto.Thickness;
+        product.Density = dto.Density;
+        product.Color = dto.Color;
+        product.Hardness = dto.Hardness;
+        product.Size = dto.Size;
+        product.Specification = dto.Specification;
 
         await _context.SaveChangesAsync();
         return true;

@@ -5,7 +5,7 @@ import SiteFooter from '../components/SiteFooter.jsx';
 import AccountSidebar from '../components/AccountSidebar.jsx';
 import '../styles/Orders.css';
 
-const API_BASE = 'http://localhost:5275/api';
+const API_BASE = '/api';
 
 export default function Orders() {
     const token = localStorage.getItem('token');

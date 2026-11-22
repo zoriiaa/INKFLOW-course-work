@@ -4,7 +4,7 @@ import SiteFooter from '../components/SiteFooter.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
 import '../styles/Wishlist.css';
 
-const API_BASE = 'http://localhost:5275/api';
+const API_BASE = '/api';
 
 const Wishlist = () => {
     const token = localStorage.getItem('token');

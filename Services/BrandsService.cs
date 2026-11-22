@@ -18,4 +18,19 @@ public class BrandsService : IBrandsService
     {
         return await _context.Brands.ToListAsync();
     }
+
+    public async Task<Brand?> CreateBrandAsync(string name)
+    {
+        var normalizedName = name.Trim();
+        if (string.IsNullOrEmpty(normalizedName)) return null;
+
+        var exists = await _context.Brands
+            .AnyAsync(brand => brand.Name.ToLower() == normalizedName.ToLower());
+        if (exists) return null;
+
+        var brand = new Brand { Name = normalizedName };
+        _context.Brands.Add(brand);
+        await _context.SaveChangesAsync();
+        return brand;
+    }
 }

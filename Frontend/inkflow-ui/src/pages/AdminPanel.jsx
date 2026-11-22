@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminPanel.css';
 
-const API_BASE = 'http://localhost:5275/api';
+const API_BASE = '/api';
 
 const formatPrice = (value) => `${Number(value || 0).toLocaleString('uk-UA')} грн`;
 const ORDER_STATUSES = ['Комплектується', 'Скасовано', 'Виконано'];
@@ -33,7 +33,10 @@ function Toast({ message, type, onClose }) {
     return <div className={`ap-toast ap-toast--${type}`}>{message}</div>;
 }
 
-const emptyForm = { name: '', description: '', price: '', imageUrl: '', categoryId: '', brandId: '', stock: '10' };
+const emptyForm = {
+    name: '', description: '', price: '', imageUrl: '', categoryId: '', brandId: '', stock: '10',
+    color: '', thickness: '', density: '', hardness: '', size: '', specification: ''
+};
 
 function ProductsSection({ token, showToast }) {
     const [products, setProducts] = useState([]);
@@ -89,7 +92,13 @@ function ProductsSection({ token, showToast }) {
                 brandId: String(detail.brandId ?? detail.brand?.id ?? ''),
                 categoryId: String(detail.categoryId ?? detail.category?.id ?? ''),
                 imageUrl: detail.imageUrl || '',
-                stock: detail.stock?.toString() || '10'
+                stock: detail.stock?.toString() || '10',
+                color: detail.color || '',
+                thickness: detail.thickness?.toString() || '',
+                density: detail.density?.toString() || '',
+                hardness: detail.hardness || '',
+                size: detail.size || '',
+                specification: detail.specification || ''
             });
         } catch (err) {
             showToast(err.message, 'error');
@@ -108,7 +117,13 @@ function ProductsSection({ token, showToast }) {
                 imageUrl: form.imageUrl,
                 categoryId: parseInt(form.categoryId),
                 brandId: parseInt(form.brandId),
-                stock: parseInt(form.stock) || 0
+                stock: parseInt(form.stock) || 0,
+                color: form.color || null,
+                thickness: form.thickness === '' ? null : parseFloat(form.thickness),
+                density: form.density === '' ? null : parseFloat(form.density),
+                hardness: form.hardness || null,
+                size: form.size || null,
+                specification: form.specification || null
             };
 
             if (editingProduct) {
@@ -179,7 +194,10 @@ function ProductsSection({ token, showToast }) {
                         <label className="ap-form__label">Категорія</label>
                         <select name="categoryId" className="ap-form__select" required value={form.categoryId} onChange={handleChange}>
                             <option value="">Оберіть категорію</option>
-                            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            {categories.map(c => {
+                                const parent = categories.find(category => category.id === c.parentCategoryId);
+                                return <option key={c.id} value={c.id}>{parent ? `${parent.name} / ${c.name}` : c.name}</option>;
+                            })}
                         </select>
                     </div>
                     <div className="ap-form__group">
@@ -196,6 +214,30 @@ function ProductsSection({ token, showToast }) {
                     <div className="ap-form__group ap-form__group--span-4">
                         <label className="ap-form__label">Опис товару</label>
                         <textarea name="description" rows="3" className="ap-form__textarea" placeholder="Детальний опис характеристик товару..." value={form.description} onChange={handleChange} />
+                    </div>
+                    <div className="ap-form__group">
+                        <label className="ap-form__label">Колір</label>
+                        <input type="text" name="color" className="ap-form__input" value={form.color} onChange={handleChange} />
+                    </div>
+                    <div className="ap-form__group">
+                        <label className="ap-form__label">Товщина (мм)</label>
+                        <input type="number" step="any" min="0" name="thickness" className="ap-form__input" value={form.thickness} onChange={handleChange} />
+                    </div>
+                    <div className="ap-form__group">
+                        <label className="ap-form__label">Щільність (г/м²)</label>
+                        <input type="number" step="any" min="0" name="density" className="ap-form__input" value={form.density} onChange={handleChange} />
+                    </div>
+                    <div className="ap-form__group">
+                        <label className="ap-form__label">Твердість</label>
+                        <input type="text" name="hardness" className="ap-form__input" value={form.hardness} onChange={handleChange} />
+                    </div>
+                    <div className="ap-form__group">
+                        <label className="ap-form__label">Розмір / кількість</label>
+                        <input type="text" name="size" className="ap-form__input" value={form.size} onChange={handleChange} />
+                    </div>
+                    <div className="ap-form__group ap-form__group--span-4">
+                        <label className="ap-form__label">Специфікація</label>
+                        <textarea name="specification" rows="2" className="ap-form__textarea" value={form.specification} onChange={handleChange} />
                     </div>
                 </div>
                 <div className="ap-form__actions">
@@ -253,6 +295,184 @@ function ProductsSection({ token, showToast }) {
                     ))}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    );
+}
+
+function CatalogSection({ token, showToast }) {
+    const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [categoryName, setCategoryName] = useState('');
+    const [parentCategoryId, setParentCategoryId] = useState('');
+    const [brandName, setBrandName] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+
+    const fetchCatalogData = useCallback(async () => {
+        const [categoryResponse, brandResponse] = await Promise.all([
+            fetch(`${API_BASE}/Categories`),
+            fetch(`${API_BASE}/Brands`)
+        ]);
+        if (!categoryResponse.ok || !brandResponse.ok)
+            throw new Error('Не вдалося завантажити категорії та бренди');
+        const [categoryData, brandData] = await Promise.all([
+            categoryResponse.json(),
+            brandResponse.json()
+        ]);
+        return { categories: categoryData, brands: brandData };
+    }, []);
+
+    useEffect(() => {
+        fetchCatalogData()
+            .then(({ categories: categoryData, brands: brandData }) => {
+                setCategories(categoryData);
+                setBrands(brandData);
+            })
+            .catch(err => showToast(err.message, 'error'))
+            .finally(() => setLoading(false));
+    }, [fetchCatalogData, showToast]);
+
+    const getApiError = async (response, fallback) => {
+        const result = await response.json().catch(() => null);
+        return result?.message || fallback;
+    };
+
+    const handleCreateCategory = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            const response = await fetch(`${API_BASE}/Categories`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: categoryName,
+                    parentCategoryId: parentCategoryId ? Number(parentCategoryId) : null
+                })
+            });
+            if (!response.ok)
+                throw new Error(await getApiError(response, 'Не вдалося створити категорію'));
+            setCategoryName('');
+            setParentCategoryId('');
+            const data = await fetchCatalogData();
+            setCategories(data.categories);
+            setBrands(data.brands);
+            showToast('Категорію успішно додано!', 'success');
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleCreateBrand = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            const response = await fetch(`${API_BASE}/Brands`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: brandName })
+            });
+            if (!response.ok)
+                throw new Error(await getApiError(response, 'Не вдалося створити бренд'));
+            setBrandName('');
+            const data = await fetchCatalogData();
+            setCategories(data.categories);
+            setBrands(data.brands);
+            showToast('Бренд успішно додано!', 'success');
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    if (loading) return <div className="ap-loading">Завантаження...</div>;
+
+    return (
+        <div className="ap-section">
+            <h2 className="ap-section__title">Каталог</h2>
+            <div className="ap-catalog-grid">
+                <section>
+                    <h3 className="ap-catalog__title">Категорії та підкатегорії</h3>
+                    <form className="ap-form" onSubmit={handleCreateCategory}>
+                        <div className="ap-form__grid">
+                            <div className="ap-form__group ap-form__group--span-2">
+                                <label className="ap-form__label">Назва</label>
+                                <input
+                                    className="ap-form__input"
+                                    value={categoryName}
+                                    onChange={e => setCategoryName(e.target.value)}
+                                    maxLength="100"
+                                    required
+                                />
+                            </div>
+                            <div className="ap-form__group ap-form__group--span-2">
+                                <label className="ap-form__label">Батьківська категорія</label>
+                                <select
+                                    className="ap-form__select"
+                                    value={parentCategoryId}
+                                    onChange={e => setParentCategoryId(e.target.value)}
+                                >
+                                    <option value="">Основна категорія</option>
+                                    {categories.filter(category => !category.parentCategoryId).map(category => (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="ap-form__actions">
+                            <button className="ap-btn ap-btn--submit" disabled={submitting}>Додати категорію</button>
+                        </div>
+                    </form>
+                    <div className="ap-table-wrapper">
+                        <table className="ap-table">
+                            <thead><tr><th>Категорія</th><th>Тип</th></tr></thead>
+                            <tbody>
+                                {categories.map(category => {
+                                    const parent = categories.find(item => item.id === category.parentCategoryId);
+                                    return (
+                                        <tr key={category.id}>
+                                            <td>{parent ? `${parent.name} / ${category.name}` : category.name}</td>
+                                            <td>{parent ? 'Підкатегорія' : 'Основна'}</td>
+                                        </tr>
+                                    );
+                                })}
+                                {categories.length === 0 && <tr><td colSpan="2" className="ap-table__empty">Категорій ще немає.</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section>
+                    <h3 className="ap-catalog__title">Бренди</h3>
+                    <form className="ap-form" onSubmit={handleCreateBrand}>
+                        <div className="ap-form__group">
+                            <label className="ap-form__label">Назва бренду</label>
+                            <input
+                                className="ap-form__input"
+                                value={brandName}
+                                onChange={e => setBrandName(e.target.value)}
+                                maxLength="100"
+                                required
+                            />
+                        </div>
+                        <div className="ap-form__actions">
+                            <button className="ap-btn ap-btn--submit" disabled={submitting}>Додати бренд</button>
+                        </div>
+                    </form>
+                    <div className="ap-table-wrapper">
+                        <table className="ap-table">
+                            <thead><tr><th>Бренд</th></tr></thead>
+                            <tbody>
+                                {brands.map(brand => (
+                                    <tr key={brand.id}><td>{brand.name}</td></tr>
+                                ))}
+                                {brands.length === 0 && <tr><td className="ap-table__empty">Брендів ще немає.</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </div>
     );
@@ -499,6 +719,16 @@ export default function Admin() {
             )
         },
         {
+            id: 'catalog',
+            label: 'Каталог',
+            icon: (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 4h16v16H4z"/>
+                    <path d="M4 9h16M9 9v11"/>
+                </svg>
+            )
+        },
+        {
             id: 'users',
             label: 'Юзери',
             icon: (
@@ -556,6 +786,7 @@ export default function Admin() {
 
             <main className="ap-content">
                 {activeTab === 'products' && <ProductsSection token={token} showToast={showToast} />}
+                {activeTab === 'catalog' && <CatalogSection token={token} showToast={showToast} />}
                 {activeTab === 'users'    && <UsersSection    token={token} showToast={showToast} />}
                 {activeTab === 'orders'   && <OrdersSection   token={token} showToast={showToast} />}
             </main>

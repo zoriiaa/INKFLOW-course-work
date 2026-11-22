@@ -28,6 +28,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/home" />} />
                 <Route path="/about" element={<About/>} />
                 <Route path="/admin" element={<Admin/>} />
+                <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
         </Router>
     );

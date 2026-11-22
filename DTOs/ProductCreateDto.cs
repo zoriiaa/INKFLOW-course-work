@@ -10,4 +10,10 @@ public class ProductCreateDto
     public int CategoryId { get; set; }
     public int BrandId { get; set; }
     public int Stock { get; set; }
+    public float? Thickness { get; set; }
+    public float? Density { get; set; }
+    public string? Color { get; set; }
+    public string? Hardness { get; set; }
+    public string? Size { get; set; }
+    public string? Specification { get; set; }
 }

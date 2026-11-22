@@ -1,4 +1,6 @@
 using INKFLOW.Services.Interfaces;
+using INKFLOW.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace INKFLOW.Controllers;
@@ -28,5 +30,16 @@ public class CategoriesController : ControllerBase
             .ToList();
 
         return Ok(result);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateDto dto)
+    {
+        var category = await _categoryService.CreateCategoryAsync(dto.Name, dto.ParentCategoryId);
+        if (category == null)
+            return BadRequest(new { message = "Перевірте назву та батьківську категорію." });
+
+        return Ok(new { category.Id, category.Name, category.ParentCategoryId });
     }
 }

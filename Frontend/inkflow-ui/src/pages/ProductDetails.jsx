@@ -5,7 +5,7 @@ import SiteFooter from '../components/SiteFooter.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
 import '../styles/ProductDetails.css';
 
-const API_BASE = 'http://localhost:5275/api';
+const API_BASE = '/api';
 
 function Toast({ message, type, onClose }) {
     useEffect(() => {
