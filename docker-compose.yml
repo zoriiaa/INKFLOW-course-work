@@ -1,0 +1,53 @@
+﻿services:
+  db:
+    image: postgres:15-alpine
+    container_name: inkflow_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      POSTGRES_DB: ${DB_NAME:-inkflow}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    networks:
+      - inkflow_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: inkflow_app
+    restart: always
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-inkflow}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      JWT_ISSUER: INKFLOW_Server
+      JWT_AUDIENCE: INKFLOW_Users
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - inkflow_network
+
+volumes:
+  postgres_data:
+
+networks:
+  inkflow_network:
+    driver: bridge
