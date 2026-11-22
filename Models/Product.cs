@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace INKFLOW.Models;
+[Index(nameof(CategoryId))]
+[Index(nameof(BrandId))]
 
 public class Product
 {

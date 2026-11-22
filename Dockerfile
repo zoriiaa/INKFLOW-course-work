@@ -1,4 +1,4 @@
-﻿FROM node:20-alpine AS frontend
+FROM node:22-alpine AS frontend
 WORKDIR /ui
 COPY Frontend/inkflow-ui/package*.json ./
 RUN npm ci

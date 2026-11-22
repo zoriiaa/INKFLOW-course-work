@@ -3,7 +3,7 @@ using INKFLOW.DTOs;
 
 public interface ICartService
 {
-    Task AddToCartAsync(int userId, int productId, int quantity);
+    Task<string?> AddToCartAsync(int userId, int productId, int quantity);
     Task<CartResponseDto> GetCartAsync(int userId);
-    Task SetCartItemQuantityAsync(int userId, int productId, int quantity);
+    Task<string?> SetCartItemQuantityAsync(int userId, int productId, int quantity);
 }

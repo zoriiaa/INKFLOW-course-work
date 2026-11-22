@@ -22,7 +22,9 @@ public class CartController : ControllerBase
         var userId = User.GetUserId();
         if (userId == null) return Unauthorized();
         
-        await _cartService.AddToCartAsync(userId.Value, productId, quantity);
+        var error = await _cartService.AddToCartAsync(userId.Value, productId, quantity);
+        if (error != null) return BadRequest(new { message = error });
+
         return Ok(new{message = "Товар додано в кошик"});
     }
     
@@ -42,9 +44,10 @@ public class CartController : ControllerBase
         var userId = User.GetUserId();
         if (userId == null) return Unauthorized();
 
-        await _cartService.SetCartItemQuantityAsync(userId.Value, productId, quantity);
+        var error = await _cartService.SetCartItemQuantityAsync(userId.Value, productId, quantity);
+        if (error != null) return BadRequest(new { message = error });
+
         return Ok(new { message = "Кошик оновлено" });
     }
     
 }
-

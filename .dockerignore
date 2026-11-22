@@ -2,8 +2,8 @@
 **/dist
 .git
 .idea
-bin
-obj
+**/bin
+**/obj
 .env
 .env.*
 !.env.example

@@ -8,6 +8,9 @@ public enum OrderStatus
     Комплектується,
     Скасовано
 }
+
+[Index(nameof(UserId))]
+[Index(nameof(Status))]
 public class Order
 {
     public int Id { get; set; }

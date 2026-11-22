@@ -42,4 +42,31 @@ public class CategoriesController : ControllerBase
 
         return Ok(new { category.Id, category.Name, category.ParentCategoryId });
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryCreateDto dto)
+    {
+        var result = await _categoryService.UpdateCategoryAsync(id, dto.Name, dto.ParentCategoryId);
+        return result switch
+        {
+            CatalogMutationResult.Success => Ok(new { message = "Категорію оновлено." }),
+            CatalogMutationResult.NotFound => NotFound(new { message = "Категорію не знайдено." }),
+            _ => BadRequest(new { message = "Перевірте назву та батьківську категорію." })
+        };
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteCategory(int id)
+    {
+        var result = await _categoryService.DeleteCategoryAsync(id);
+        return result switch
+        {
+            CatalogMutationResult.Success => Ok(new { message = "Категорію видалено." }),
+            CatalogMutationResult.NotFound => NotFound(new { message = "Категорію не знайдено." }),
+            CatalogMutationResult.HasDependencies => BadRequest(new { message = "Неможливо видалити категорію, до якої прив'язані товари або підкатегорії." }),
+            _ => BadRequest()
+        };
+    }
 }

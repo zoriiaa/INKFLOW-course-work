@@ -25,6 +25,15 @@ function getRoleFromToken(token) {
     }
 }
 
+function getUserIdFromToken(token) {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        return Number(payload.sub || payload.nameid || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']);
+    } catch {
+        return null;
+    }
+}
+
 function Toast({ message, type, onClose }) {
     useEffect(() => {
         const t = setTimeout(onClose, 3500);
@@ -306,6 +315,8 @@ function CatalogSection({ token, showToast }) {
     const [categoryName, setCategoryName] = useState('');
     const [parentCategoryId, setParentCategoryId] = useState('');
     const [brandName, setBrandName] = useState('');
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
+    const [editingBrandId, setEditingBrandId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
@@ -338,12 +349,13 @@ function CatalogSection({ token, showToast }) {
         return result?.message || fallback;
     };
 
-    const handleCreateCategory = async (e) => {
+    const handleSaveCategory = async (e) => {
         e.preventDefault();
+        const wasEditing = Boolean(editingCategoryId);
         setSubmitting(true);
         try {
-            const response = await fetch(`${API_BASE}/Categories`, {
-                method: 'POST',
+            const response = await fetch(`${API_BASE}/Categories${editingCategoryId ? `/${editingCategoryId}` : ''}`, {
+                method: editingCategoryId ? 'PUT' : 'POST',
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: categoryName,
@@ -351,13 +363,14 @@ function CatalogSection({ token, showToast }) {
                 })
             });
             if (!response.ok)
-                throw new Error(await getApiError(response, 'Не вдалося створити категорію'));
+                throw new Error(await getApiError(response, 'Не вдалося зберегти категорію'));
             setCategoryName('');
             setParentCategoryId('');
+            setEditingCategoryId(null);
             const data = await fetchCatalogData();
             setCategories(data.categories);
             setBrands(data.brands);
-            showToast('Категорію успішно додано!', 'success');
+            showToast(wasEditing ? 'Категорію оновлено!' : 'Категорію успішно додано!', 'success');
         } catch (err) {
             showToast(err.message, 'error');
         } finally {
@@ -365,26 +378,56 @@ function CatalogSection({ token, showToast }) {
         }
     };
 
-    const handleCreateBrand = async (e) => {
+    const handleSaveBrand = async (e) => {
         e.preventDefault();
+        const wasEditing = Boolean(editingBrandId);
         setSubmitting(true);
         try {
-            const response = await fetch(`${API_BASE}/Brands`, {
-                method: 'POST',
+            const response = await fetch(`${API_BASE}/Brands${editingBrandId ? `/${editingBrandId}` : ''}`, {
+                method: editingBrandId ? 'PUT' : 'POST',
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: brandName })
             });
             if (!response.ok)
-                throw new Error(await getApiError(response, 'Не вдалося створити бренд'));
+                throw new Error(await getApiError(response, 'Не вдалося зберегти бренд'));
             setBrandName('');
+            setEditingBrandId(null);
             const data = await fetchCatalogData();
             setCategories(data.categories);
             setBrands(data.brands);
-            showToast('Бренд успішно додано!', 'success');
+            showToast(wasEditing ? 'Бренд оновлено!' : 'Бренд успішно додано!', 'success');
         } catch (err) {
             showToast(err.message, 'error');
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleDeleteCatalogItem = async (type, id) => {
+        const label = type === 'Categories' ? 'категорію' : 'бренд';
+        if (!window.confirm(`Видалити ${label}?`)) return;
+        try {
+            const response = await fetch(`${API_BASE}/${type}/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!response.ok)
+                throw new Error(await getApiError(response, `Не вдалося видалити ${label}`));
+            const data = await fetchCatalogData();
+            setCategories(data.categories);
+            setBrands(data.brands);
+            if (type === 'Categories' && editingCategoryId === id) {
+                setEditingCategoryId(null);
+                setCategoryName('');
+                setParentCategoryId('');
+            }
+            if (type === 'Brands' && editingBrandId === id) {
+                setEditingBrandId(null);
+                setBrandName('');
+            }
+            showToast(`${label[0].toUpperCase()}${label.slice(1)} видалено.`, 'success');
+        } catch (err) {
+            showToast(err.message, 'error');
         }
     };
 
@@ -396,7 +439,7 @@ function CatalogSection({ token, showToast }) {
             <div className="ap-catalog-grid">
                 <section>
                     <h3 className="ap-catalog__title">Категорії та підкатегорії</h3>
-                    <form className="ap-form" onSubmit={handleCreateCategory}>
+                    <form className="ap-form" onSubmit={handleSaveCategory}>
                         <div className="ap-form__grid">
                             <div className="ap-form__group ap-form__group--span-2">
                                 <label className="ap-form__label">Назва</label>
@@ -416,19 +459,26 @@ function CatalogSection({ token, showToast }) {
                                     onChange={e => setParentCategoryId(e.target.value)}
                                 >
                                     <option value="">Основна категорія</option>
-                                    {categories.filter(category => !category.parentCategoryId).map(category => (
+                                    {categories.filter(category => !category.parentCategoryId && category.id !== editingCategoryId).map(category => (
                                         <option key={category.id} value={category.id}>{category.name}</option>
                                     ))}
                                 </select>
                             </div>
                         </div>
                         <div className="ap-form__actions">
-                            <button className="ap-btn ap-btn--submit" disabled={submitting}>Додати категорію</button>
+                            <button className="ap-btn ap-btn--submit" disabled={submitting}>
+                                {editingCategoryId ? 'Зберегти категорію' : 'Додати категорію'}
+                            </button>
+                            {editingCategoryId && <button type="button" className="ap-btn ap-btn--cancel" onClick={() => {
+                                setEditingCategoryId(null);
+                                setCategoryName('');
+                                setParentCategoryId('');
+                            }}>Скасувати</button>}
                         </div>
                     </form>
                     <div className="ap-table-wrapper">
                         <table className="ap-table">
-                            <thead><tr><th>Категорія</th><th>Тип</th></tr></thead>
+                            <thead><tr><th>Категорія</th><th>Тип</th><th>Дії</th></tr></thead>
                             <tbody>
                                 {categories.map(category => {
                                     const parent = categories.find(item => item.id === category.parentCategoryId);
@@ -436,17 +486,25 @@ function CatalogSection({ token, showToast }) {
                                         <tr key={category.id}>
                                             <td>{parent ? `${parent.name} / ${category.name}` : category.name}</td>
                                             <td>{parent ? 'Підкатегорія' : 'Основна'}</td>
+                                            <td><div className="ap-table__actions">
+                                                <button className="ap-btn ap-btn--edit" onClick={() => {
+                                                    setEditingCategoryId(category.id);
+                                                    setCategoryName(category.name);
+                                                    setParentCategoryId(category.parentCategoryId ? String(category.parentCategoryId) : '');
+                                                }}>Редагувати</button>
+                                                <button className="ap-btn ap-btn--danger" onClick={() => handleDeleteCatalogItem('Categories', category.id)}>Видалити</button>
+                                            </div></td>
                                         </tr>
                                     );
                                 })}
-                                {categories.length === 0 && <tr><td colSpan="2" className="ap-table__empty">Категорій ще немає.</td></tr>}
+                                {categories.length === 0 && <tr><td colSpan="3" className="ap-table__empty">Категорій ще немає.</td></tr>}
                             </tbody>
                         </table>
                     </div>
                 </section>
                 <section>
                     <h3 className="ap-catalog__title">Бренди</h3>
-                    <form className="ap-form" onSubmit={handleCreateBrand}>
+                    <form className="ap-form" onSubmit={handleSaveBrand}>
                         <div className="ap-form__group">
                             <label className="ap-form__label">Назва бренду</label>
                             <input
@@ -458,17 +516,32 @@ function CatalogSection({ token, showToast }) {
                             />
                         </div>
                         <div className="ap-form__actions">
-                            <button className="ap-btn ap-btn--submit" disabled={submitting}>Додати бренд</button>
+                            <button className="ap-btn ap-btn--submit" disabled={submitting}>
+                                {editingBrandId ? 'Зберегти бренд' : 'Додати бренд'}
+                            </button>
+                            {editingBrandId && <button type="button" className="ap-btn ap-btn--cancel" onClick={() => {
+                                setEditingBrandId(null);
+                                setBrandName('');
+                            }}>Скасувати</button>}
                         </div>
                     </form>
                     <div className="ap-table-wrapper">
                         <table className="ap-table">
-                            <thead><tr><th>Бренд</th></tr></thead>
+                            <thead><tr><th>Бренд</th><th>Дії</th></tr></thead>
                             <tbody>
                                 {brands.map(brand => (
-                                    <tr key={brand.id}><td>{brand.name}</td></tr>
+                                    <tr key={brand.id}>
+                                        <td>{brand.name}</td>
+                                        <td><div className="ap-table__actions">
+                                            <button className="ap-btn ap-btn--edit" onClick={() => {
+                                                setEditingBrandId(brand.id);
+                                                setBrandName(brand.name);
+                                            }}>Редагувати</button>
+                                            <button className="ap-btn ap-btn--danger" onClick={() => handleDeleteCatalogItem('Brands', brand.id)}>Видалити</button>
+                                        </div></td>
+                                    </tr>
                                 ))}
-                                {brands.length === 0 && <tr><td className="ap-table__empty">Брендів ще немає.</td></tr>}
+                                {brands.length === 0 && <tr><td colSpan="2" className="ap-table__empty">Брендів ще немає.</td></tr>}
                             </tbody>
                         </table>
                     </div>
@@ -481,6 +554,7 @@ function CatalogSection({ token, showToast }) {
 function UsersSection({ token, showToast }) {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const currentUserId = getUserIdFromToken(token);
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -511,6 +585,24 @@ function UsersSection({ token, showToast }) {
         }
     };
 
+    const handleDeleteUser = async (id) => {
+        if (!window.confirm('Видалити цього користувача та його дані?')) return;
+        try {
+            const res = await fetch(`${API_BASE}/Admin/users/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) {
+                const error = await res.json().catch(() => null);
+                throw new Error(error?.message || 'Не вдалося видалити користувача');
+            }
+            setUsers(prev => prev.filter(user => user.id !== id));
+            showToast('Користувача видалено.', 'success');
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    };
+
     if (loading) return <div className="ap-loading">Завантаження...</div>;
 
     return (
@@ -524,6 +616,7 @@ function UsersSection({ token, showToast }) {
                         <th>Користувач</th>
                         <th>Email</th>
                         <th>Роль</th>
+                        <th>Дії</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -542,6 +635,14 @@ function UsersSection({ token, showToast }) {
                                     <option value="User">User</option>
                                     <option value="Admin">Admin</option>
                                 </select>
+                            </td>
+                            <td>
+                                <button
+                                    className="ap-btn ap-btn--danger"
+                                    disabled={u.id === currentUserId}
+                                    title={u.id === currentUserId ? 'Не можна видалити власний обліковий запис' : ''}
+                                    onClick={() => handleDeleteUser(u.id)}
+                                >Видалити</button>
                             </td>
                         </tr>
                     ))}
@@ -589,6 +690,24 @@ function OrdersSection({ token, showToast }) {
         }
     };
 
+    const handleDeleteOrder = async (id) => {
+        if (!window.confirm('Видалити це замовлення?')) return;
+        try {
+            const res = await fetch(`${API_BASE}/Admin/orders/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) {
+                const error = await res.json().catch(() => null);
+                throw new Error(error?.message || 'Не вдалося видалити замовлення');
+            }
+            setOrders(prev => prev.filter(order => order.id !== id));
+            showToast('Замовлення видалено.', 'success');
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
+    };
+
     const visibleOrders = useMemo(() => {
         if (statusFilter === 'all') return orders;
         return orders.filter(order => (order.status || 'Комплектується') === statusFilter);
@@ -630,6 +749,7 @@ function OrdersSection({ token, showToast }) {
                         <th>Товари</th>
                         <th>Сума</th>
                         <th>Статус замовлення</th>
+                        <th>Дії</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -668,17 +788,107 @@ function OrdersSection({ token, showToast }) {
                                     ))}
                                 </select>
                             </td>
+                            <td><button className="ap-btn ap-btn--danger" onClick={() => handleDeleteOrder(o.id)}>Видалити</button></td>
                         </tr>
                     ))}
                     {visibleOrders.length === 0 && (
                         <tr>
-                            <td colSpan="6" className="ap-table__empty">
+                            <td colSpan="7" className="ap-table__empty">
                                 Замовлень з таким статусом немає.
                             </td>
                         </tr>
                     )}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    );
+}
+
+function ReportsSection({ token, showToast }) {
+    const [monthlyRevenue, setMonthlyRevenue] = useState([]);
+    const [topProducts, setTopProducts] = useState([]);
+    const [ordersByStatus, setOrdersByStatus] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchReports = useCallback(async () => {
+        try {
+            const headers = { Authorization: `Bearer ${token}` };
+            const responses = await Promise.all([
+                fetch(`${API_BASE}/Admin/reports/monthly-revenue`, { headers }),
+                fetch(`${API_BASE}/Admin/reports/top-products`, { headers }),
+                fetch(`${API_BASE}/Admin/reports/orders-by-status`, { headers })
+            ]);
+            if (responses.some(response => !response.ok))
+                throw new Error('Не вдалося завантажити звітні дані');
+            const [revenue, products, statuses] = await Promise.all(responses.map(response => response.json()));
+            setMonthlyRevenue(revenue);
+            setTopProducts(products);
+            setOrdersByStatus(statuses);
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    }, [token, showToast]);
+
+    useEffect(() => { fetchReports(); }, [fetchReports]);
+
+    if (loading) return <div className="ap-loading">Завантаження...</div>;
+
+    return (
+        <div className="ap-section">
+            <h2 className="ap-section__title">Звіти</h2>
+            <div className="ap-catalog-grid">
+                <section>
+                    <h3 className="ap-catalog__title">Виручка за місяцями</h3>
+                    <div className="ap-table-wrapper">
+                        <table className="ap-table">
+                            <thead><tr><th>Місяць</th><th>Виручка</th></tr></thead>
+                            <tbody>
+                                {monthlyRevenue.map(item => (
+                                    <tr key={`${item.year}-${item.month}`}>
+                                        <td>{new Date(item.year, item.month - 1).toLocaleDateString('uk-UA', { month: 'long', year: 'numeric' })}</td>
+                                        <td>{formatPrice(item.revenue)}</td>
+                                    </tr>
+                                ))}
+                                {monthlyRevenue.length === 0 && <tr><td colSpan="2" className="ap-table__empty">Даних поки немає.</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section>
+                    <h3 className="ap-catalog__title">Топ-5 товарів за продажами</h3>
+                    <div className="ap-table-wrapper">
+                        <table className="ap-table">
+                            <thead><tr><th>Товар</th><th>Кількість</th><th>Виручка</th></tr></thead>
+                            <tbody>
+                                {topProducts.map(item => (
+                                    <tr key={item.productId}>
+                                        <td>{item.productName}</td>
+                                        <td>{item.quantitySold}</td>
+                                        <td>{formatPrice(item.revenue)}</td>
+                                    </tr>
+                                ))}
+                                {topProducts.length === 0 && <tr><td colSpan="3" className="ap-table__empty">Даних поки немає.</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section>
+                    <h3 className="ap-catalog__title">Замовлення за статусами</h3>
+                    <div className="ap-table-wrapper">
+                        <table className="ap-table">
+                            <thead><tr><th>Статус</th><th>Кількість</th></tr></thead>
+                            <tbody>
+                                {ordersByStatus.map(item => (
+                                    <tr key={item.status}><td>{item.status}</td><td>{item.count}</td></tr>
+                                ))}
+                                {ordersByStatus.length === 0 && <tr><td colSpan="2" className="ap-table__empty">Даних поки немає.</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </div>
     );
@@ -752,6 +962,16 @@ export default function Admin() {
                     <polyline points="10 9 9 9 8 9"/>
                 </svg>
             )
+        },
+        {
+            id: 'reports',
+            label: 'Звіти',
+            icon: (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 19V5M4 19h16" />
+                    <path d="m7 15 4-4 3 2 5-6" />
+                </svg>
+            )
         }
     ];
 
@@ -789,6 +1009,7 @@ export default function Admin() {
                 {activeTab === 'catalog' && <CatalogSection token={token} showToast={showToast} />}
                 {activeTab === 'users'    && <UsersSection    token={token} showToast={showToast} />}
                 {activeTab === 'orders'   && <OrdersSection   token={token} showToast={showToast} />}
+                {activeTab === 'reports'  && <ReportsSection  token={token} showToast={showToast} />}
             </main>
 
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

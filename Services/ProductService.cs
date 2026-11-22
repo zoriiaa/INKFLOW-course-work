@@ -43,6 +43,7 @@ public class ProductService : IProductService
         if (!string.IsNullOrEmpty(searchTerm)) query = query.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower()));
         
         query = query
+            .OrderBy(p => p.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize);
         

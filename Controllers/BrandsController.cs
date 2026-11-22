@@ -33,4 +33,32 @@ public class BrandsController : ControllerBase
 
         return Ok(brand);
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateBrand(int id, [FromBody] BrandCreateDto dto)
+    {
+        var result = await _brandsService.UpdateBrandAsync(id, dto.Name);
+        return result switch
+        {
+            CatalogMutationResult.Success => Ok(new { message = "Бренд оновлено." }),
+            CatalogMutationResult.NotFound => NotFound(new { message = "Бренд не знайдено." }),
+            CatalogMutationResult.Conflict => Conflict(new { message = "Бренд із такою назвою вже існує." }),
+            _ => BadRequest(new { message = "Некоректна назва бренду." })
+        };
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteBrand(int id)
+    {
+        var result = await _brandsService.DeleteBrandAsync(id);
+        return result switch
+        {
+            CatalogMutationResult.Success => Ok(new { message = "Бренд видалено." }),
+            CatalogMutationResult.NotFound => NotFound(new { message = "Бренд не знайдено." }),
+            CatalogMutationResult.HasDependencies => BadRequest(new { message = "Неможливо видалити бренд, поки до нього прив'язані товари." }),
+            _ => BadRequest()
+        };
+    }
 }

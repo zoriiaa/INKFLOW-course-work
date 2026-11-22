@@ -15,15 +15,19 @@ public class CartService : ICartService
         _context = context;
     }
 
-    public async Task AddToCartAsync(int userId, int productId, int quantity)
+    public async Task<string?> AddToCartAsync(int userId, int productId, int quantity)
     {
-        if (quantity <= 0) quantity = 1;
+        if (quantity <= 0) return "Кількість має бути більшою за нуль.";
 
-        var productExists = await _context.Products.AnyAsync(p => p.Id == productId);
-        if (!productExists) return;
+        var product = await _context.Products.FindAsync(productId);
+        if (product == null) return "Товар не знайдено.";
 
         var existingItem = await _context.CartItems
             .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
+
+        var currentQuantity = existingItem?.Quantity ?? 0;
+        if (quantity > product.Stock - currentQuantity)
+            return "Запитана кількість перевищує залишок товару на складі.";
 
         if (existingItem != null)
         {
@@ -34,6 +38,7 @@ public class CartService : ICartService
             _context.CartItems.Add(new CartItem { UserId = userId, ProductId = productId, Quantity = quantity });
         }
         await _context.SaveChangesAsync();
+        return null;
     }
 
     public async Task<CartResponseDto> GetCartAsync(int userId)
@@ -53,18 +58,29 @@ public class CartService : ICartService
         return new CartResponseDto { Items = items };
     }
 
-    public async Task SetCartItemQuantityAsync(int userId, int productId, int quantity)
+    public async Task<string?> SetCartItemQuantityAsync(int userId, int productId, int quantity)
     {
         var existingItem = await _context.CartItems
             .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
 
-        if (existingItem == null) return;
+        if (existingItem == null) return null;
 
         if (quantity <= 0)
             _context.CartItems.Remove(existingItem);
         else
+        {
+            var stock = await _context.Products
+                .Where(product => product.Id == productId)
+                .Select(product => (int?)product.Stock)
+                .FirstOrDefaultAsync();
+            if (stock == null) return "Товар не знайдено.";
+            if (quantity > stock.Value)
+                return "Запитана кількість перевищує залишок товару на складі.";
+
             existingItem.Quantity = quantity;
+        }
 
         await _context.SaveChangesAsync();
+        return null;
     }
 }
