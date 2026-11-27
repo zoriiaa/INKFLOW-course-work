@@ -197,3 +197,121 @@
     border-radius: 6px;
     font-weight: 600;
 }
+
+@media (max-width: 900px) {
+    .cart-container {
+        padding: 24px 16px 48px;
+    }
+
+    .cart-title {
+        font-size: clamp(28px, 8vw, 38px);
+        margin-bottom: 18px;
+    }
+
+    .cart-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .cart-summary {
+        position: static;
+        width: 100%;
+    }
+
+    .checkout-btn {
+        min-height: 52px;
+        font-size: 13px;
+        letter-spacing: .5px;
+    }
+
+    .continue-shopping {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .cart-container {
+        padding: 18px 12px 40px;
+    }
+
+    .cart-item-card {
+        min-height: 112px;
+        padding: 12px 10px 12px 94px;
+        align-items: center;
+    }
+
+    .cart-item-remove {
+        top: 8px;
+        right: 8px;
+        width: 36px;
+        height: 36px;
+        z-index: 2;
+    }
+
+    .cart-item__img-wrap {
+        left: 10px;
+        top: 12px;
+    }
+
+    .cart-item__img {
+        width: 72px;
+        height: 72px;
+    }
+
+    .cart-item__info {
+        padding-right: 24px;
+        min-width: 0;
+    }
+
+    .cart-item__info h3 {
+        margin: 0 0 10px;
+        padding-right: 12px;
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .cart-item__row {
+        align-items: flex-end;
+        gap: 8px;
+    }
+
+    .qty-stepper button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .qty-stepper span {
+        min-width: 30px;
+    }
+
+    .cart-item__price {
+        font-size: 15px;
+        white-space: nowrap;
+    }
+
+    .cart-summary {
+        padding: 18px 14px;
+    }
+
+    .cart-summary h2 {
+        font-size: 19px;
+    }
+
+    .summary-row {
+        font-size: 14px;
+    }
+
+    .summary-row.total {
+        font-size: 20px;
+    }
+
+    .cart-toast {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        text-align: center;
+    }
+}

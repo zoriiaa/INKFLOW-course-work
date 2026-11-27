@@ -56,3 +56,36 @@
 .site-footer-right-space {
     min-width: 140px;
 }
+
+@media (max-width: 900px) {
+    .site-footer-black {
+        flex-direction: column;
+        gap: 30px;
+        padding: 44px 24px;
+        text-align: center;
+    }
+    .site-footer-left-group {
+        align-items: center;
+    }
+    .site-footer-center-content {
+        flex-direction: column;
+    }
+    .site-footer-nav-menu {
+        align-items: center;
+    }
+    .site-footer-right-space {
+        display: none;
+    }
+    .site-brand-name {
+        font-size: clamp(30px, 9vw, 38px);
+    }
+    .site-brand-sub {
+        font-size: clamp(15px, 4vw, 20px);
+    }
+    .site-footer-nav-menu a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        font-size: clamp(16px, 5vw, 20px);
+    }
+}

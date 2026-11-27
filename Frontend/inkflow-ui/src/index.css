@@ -8,3 +8,31 @@ html, body {
     height: 100%;
     overflow-x: hidden;
 }
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+button,
+select,
+input {
+    font: inherit;
+}
+
+img,
+svg {
+    max-width: 100%;
+}
+
+@media (max-width: 700px) {
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    body {
+        min-width: 320px;
+    }
+}

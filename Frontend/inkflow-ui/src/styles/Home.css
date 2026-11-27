@@ -351,19 +351,69 @@
 }
 
 @media (max-width: 700px) {
+    .hero-photo-side {
+        height: 58vw;
+        min-height: 260px;
+    }
+    .hero-content-side {
+        min-height: 390px;
+        padding: 36px 20px;
+    }
+    .hero-logo {
+        width: clamp(130px, 42vw, 170px);
+        margin-bottom: 28px;
+    }
+    .hero-title {
+        font-size: clamp(22px, 7vw, 32px);
+    }
+    .hero-subtitle {
+        font-size: clamp(15px, 4.2vw, 18px);
+        line-height: 1.55;
+        margin-bottom: 34px;
+    }
+    .brands-section {
+        padding: 48px 12px 40px;
+    }
+    .brands-header {
+        margin-bottom: 28px;
+        padding: 0 8px;
+    }
+    .brands-title {
+        font-size: clamp(24px, 7vw, 30px);
+    }
+    .brands-desc {
+        font-size: clamp(14px, 4vw, 16px);
+        line-height: 1.55;
+    }
     .brands-grid {
         grid-template-columns: 1fr;
-        grid-template-areas:
-            "manuscript"
-            "middle"
-            "posca"
-            "copic";
+        grid-template-rows: none;
+        gap: 8px;
+    }
+    .brand-card--manuscript,
+    .brand-card--copic,
+    .brand-card--posca,
+    .brand-card-column {
+        grid-column: 1;
+        grid-row: auto;
+    }
+    .brand-card-column {
+        height: auto;
     }
     .brand-card--large,
     .brand-card--half {
-        height: 240px;
+        height: clamp(220px, 68vw, 280px);
     }
     .hero-content-side {
         padding: 40px 24px;
+    }
+    .brands-cta {
+        margin-top: 30px;
+    }
+    .btn-outline-black {
+        min-height: 52px;
+        width: min(280px, 100%);
+        justify-content: center;
+        padding: 14px 20px;
     }
 }

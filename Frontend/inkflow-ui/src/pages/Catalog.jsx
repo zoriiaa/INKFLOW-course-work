@@ -160,6 +160,7 @@ const Catalog = () => {
     const [loading, setLoading]         = useState(true);
     const [toast, setToast]             = useState(null);
     const [searchOpen, setSearchOpen]   = useState(false);
+    const [filterOpen, setFilterOpen]   = useState(false);
     const [wishlistIds, setWishlistIds] = useState(new Set());
 
     const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
@@ -231,6 +232,19 @@ const Catalog = () => {
         if (matched) setSelectedBrand(matched.id);
     }, [brandFromUrl, brands]);
 
+    useEffect(() => {
+        if (!filterOpen) return;
+        const onKeyDown = event => {
+            if (event.key === 'Escape') setFilterOpen(false);
+        };
+        document.body.classList.add('catalog-filter-lock');
+        window.addEventListener('keydown', onKeyDown);
+        return () => {
+            document.body.classList.remove('catalog-filter-lock');
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    }, [filterOpen]);
+
     const handleCategoryToggle = (id) => {
         setSelectedCategoryIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
@@ -279,7 +293,19 @@ const Catalog = () => {
             <SiteHeader />
             <div className="catalog-body">
 
-                <aside className="catalog-sidebar">
+                {filterOpen && (
+                    <button
+                        type="button"
+                        className="catalog-filter-backdrop"
+                        aria-label="Закрити фільтри"
+                        onClick={() => setFilterOpen(false)}
+                    />
+                )}
+                <aside className={`catalog-sidebar${filterOpen ? ' catalog-sidebar--open' : ''}`}>
+                    <div className="catalog-filter-drawer-head">
+                        <strong>ФІЛЬТРИ</strong>
+                        <button type="button" onClick={() => setFilterOpen(false)} aria-label="Закрити фільтри">×</button>
+                    </div>
 
                     <FilterBlock title="КАТЕГОРІЯ">
                         {parentCats.map(parent => {
@@ -415,6 +441,14 @@ const Catalog = () => {
                             {loading ? '…' : `${filteredProducts.length} товарів`}
                         </span>
                         <div className="catalog-toolbar__right">
+                            <button
+                                type="button"
+                                className="catalog-filter-toggle"
+                                onClick={() => setFilterOpen(true)}
+                            >
+                                Фільтри
+                                {hasFilters && <span className="catalog-filter-toggle__count">•</span>}
+                            </button>
                             {hasFilters && (
                                 <button className="clear-all-btn" onClick={clearFilters}>
                                     Скинути фільтри ×

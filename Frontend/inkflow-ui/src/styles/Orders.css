@@ -147,3 +147,65 @@
 .status-badge--скасовано {
     color: #b03030;
 }
+
+@media (max-width: 700px) {
+    .orders-wrap {
+        grid-template-columns: 1fr;
+        padding: 16px 12px 40px;
+        gap: 12px;
+    }
+
+    .orders-main {
+        padding: 16px 12px;
+    }
+
+    .orders-main h1 {
+        font-size: 21px;
+        line-height: 1.2;
+    }
+
+    .orders-list {
+        gap: 10px;
+    }
+
+    .order-card {
+        padding: 12px;
+    }
+
+    .order-card__head {
+        gap: 10px;
+    }
+
+    .order-card__meta {
+        min-width: 92px;
+    }
+
+    .order-card__total-bold {
+        font-size: 16px;
+    }
+
+    .order-item {
+        display: grid;
+        grid-template-columns: 56px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .order-item__thumb {
+        width: 56px;
+        height: 56px;
+    }
+
+    .order-item__name {
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .order-item__qty-price {
+        font-size: 12px;
+    }
+
+    .order-item__line-total {
+        font-size: 12px;
+    }
+}
