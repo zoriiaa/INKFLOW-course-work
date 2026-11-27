@@ -102,7 +102,10 @@
 }
 
 .reg-panel-right {
+    position: relative;
     width: 50%;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .collage-fit {
@@ -170,18 +173,25 @@
 
 @media (max-width: 1100px) {
     .reg-hero { flex-direction: column; height: auto; }
-    .reg-panel-left, .reg-panel-right { width: 100%; }
-    .reg-panel-right { height: 500px; }
+    .reg-panel-left {
+        width: 100%;
+        padding: 48px 20px;
+    }
+    .reg-content { max-width: 460px; }
+    .reg-panel-right {
+        width: 100%;
+        height: clamp(320px, 100vw, 500px);
+    }
     .footer-black { flex-direction: column; gap: 40px; text-align: center; }
     .footer-center-content { flex-direction: column; }
     .footer-nav-menu { align-items: center; }
 }
 
-.reg-panel-right {
-    position: relative;
-    width: 50%;
-    height: 100vh;
-    overflow: hidden;
+@media (max-width: 480px) {
+    .reg-panel-left { padding: 40px 16px; }
+    .form-card-white { padding: 28px 24px; }
+    .main-logo { width: 120px; }
+    .slogan-container { margin-bottom: 28px; }
 }
 
 

@@ -252,3 +252,24 @@
         align-items: center;
     }
 }
+
+@media (max-width: 700px) {
+    .login-panel-right {
+        padding: 40px 16px;
+    }
+    .login-content {
+        max-width: 460px;
+    }
+    .login-logo {
+        width: 120px;
+    }
+    .login-slogan-text {
+        font-size: clamp(24px, 6vw, 32px);
+    }
+    .login-panel-left {
+        height: clamp(280px, 90vw, 500px);
+    }
+    .form-card-white {
+        padding: 28px 24px;
+    }
+}
