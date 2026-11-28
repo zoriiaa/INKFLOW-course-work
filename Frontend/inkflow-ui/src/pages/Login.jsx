@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
 import loginPhoto from '../assets/images/LoginPhoto.svg';
@@ -11,6 +11,7 @@ const Login = () => {
         password: "",
     });
     const [showError, setShowError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -19,6 +20,9 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
+        setLoading(true);
+
         try {
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -33,8 +37,10 @@ const Login = () => {
                 setShowError(true);
                 setTimeout(() => setShowError(false), 3000);
             }
-        } catch (err) {
+        } catch {
             alert("Сервер не відповідає");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -84,8 +90,8 @@ const Login = () => {
                                     />
                                 </div>
 
-                                <button type="submit" className="btn-submit-black">
-                                    Увійти
+                                <button type="submit" className="btn-submit-black" disabled={loading}>
+                                    {loading ? 'Зачекайте...' : 'Увійти'}
                                 </button>
                             </form>
                             <p className="form-footer-txt">

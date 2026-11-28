@@ -94,6 +94,11 @@
     margin-top: 10px;
 }
 
+.btn-submit-black:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
 .form-footer-txt {
     text-align: center;
     font-size: 11px;

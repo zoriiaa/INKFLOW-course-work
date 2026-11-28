@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
 import collage from '../assets/images/Collage.png';
@@ -7,6 +7,7 @@ import SiteFooter from '../components/SiteFooter.jsx';
 
 const Register = () => {
     const [showToast, setShowToast] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -20,6 +21,10 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
+        setLoading(true);
+        let registrationSucceeded = false;
+
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -27,6 +32,7 @@ const Register = () => {
                 body: JSON.stringify(formData)
             });
             if (response.ok) {
+                registrationSucceeded = true;
                 setShowToast(true); 
                 setTimeout(() => {
                     setShowToast(false);
@@ -36,8 +42,10 @@ const Register = () => {
                 const error = await response.text();
                 alert(error);
             }
-        } catch (err) {
+        } catch {
             alert("Сервер не відповідає");
+        } finally {
+            if (!registrationSucceeded) setLoading(false);
         }
     };
 
@@ -83,8 +91,8 @@ const Register = () => {
                                     />
                                 </div>
 
-                                <button type="submit" className="btn-submit-black">
-                                    Зареєструватись
+                                <button type="submit" className="btn-submit-black" disabled={loading}>
+                                    {loading ? 'Зачекайте...' : 'Зареєструватись'}
                                 </button>
                             </form>
                             <p className="form-footer-txt">

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 namespace INKFLOW.Services;
 
@@ -36,7 +37,20 @@ public class AuthService : IAuthService
         };
         
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (
+            ex.InnerException is PostgresException
+            {
+                SqlState: PostgresErrorCodes.UniqueViolation,
+                ConstraintName: "IX_Users_Email"
+            })
+        {
+            return false;
+        }
+
         return true;
     }
 

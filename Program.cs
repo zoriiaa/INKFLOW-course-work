@@ -106,6 +106,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/health", async (AppDbContext db) =>
+    await db.Database.CanConnectAsync()
+        ? Results.Ok(new { status = "Healthy" })
+        : Results.StatusCode(StatusCodes.Status503ServiceUnavailable));
 app.MapFallbackToFile("index.html");
 
 app.Run();
