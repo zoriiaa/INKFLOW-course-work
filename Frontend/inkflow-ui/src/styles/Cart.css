@@ -186,18 +186,6 @@
     padding: 10px 14px;
 }
 
-.cart-toast {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    z-index: 9999;
-    background: #111;
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: 6px;
-    font-weight: 600;
-}
-
 @media (max-width: 900px) {
     .cart-container {
         padding: 24px 16px 48px;
@@ -308,10 +296,4 @@
         font-size: 20px;
     }
 
-    .cart-toast {
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-        text-align: center;
-    }
 }

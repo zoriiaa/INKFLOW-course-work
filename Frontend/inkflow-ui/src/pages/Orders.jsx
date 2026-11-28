@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
@@ -63,7 +63,7 @@ export default function Orders() {
                                             <div key={`${order.id}-${item.productId}`} className="order-item">
                                                 <Link to={`/product/${item.productId}`} className="order-item__thumb-link">
                                                     {item.imageUrl
-                                                        ? <img src={item.imageUrl} alt="" className="order-item__thumb" />
+                                                        ? <img src={item.imageUrl} alt="" className="order-item__thumb" loading="lazy" decoding="async" />
                                                         : <div className="order-item__thumb order-item__thumb--empty">—</div>
                                                     }
                                                 </Link>

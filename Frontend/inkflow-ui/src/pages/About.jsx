@@ -1,4 +1,3 @@
-import React from 'react';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import '../styles/About.css';
@@ -92,6 +91,8 @@ export default function About() {
                                     src={brand.src}
                                     alt={brand.name}
                                     className="about-partners__logo"
+                                    loading="lazy"
+                                    decoding="async"
                                     style={brand.forceBlack ? { filter: 'brightness(0)' } : undefined}
                                 />
                             </div>

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import SearchOverlay from '../components/SearchOverlay.jsx';
-import '../components/SearchOverlay.css';
+import Toast from '../components/Toast.jsx';
+import { closeSiteNavigation } from '../utils/overlayEvents.js';
 import { notifyCartChanged } from '../utils/cartEvents.js';
 import '../styles/Catalog.css';
 import SiteHeader from '../components/SiteHeader.jsx';
@@ -35,18 +35,6 @@ function productMatchesSelectedColor(productColor, selectedSwatchName) {
         return swatch.matchTerms.some(t => hay.includes(t.toLowerCase()));
     }
     return hay.includes(selectedSwatchName.toLowerCase());
-}
-
-function Toast({ message, type, onClose }) {
-    useEffect(() => {
-        const t = setTimeout(onClose, 3000);
-        return () => clearTimeout(t);
-    }, [onClose]);
-    return (
-        <div className={`catalog-toast catalog-toast--${type}`}>
-            {message}
-        </div>
-    );
 }
 
 function ProductCard({ p, token, showToast, wishlistIds, onWishChange }) {
@@ -88,7 +76,7 @@ function ProductCard({ p, token, showToast, wishlistIds, onWishChange }) {
         <div className="product-card">
             <Link to={`/product/${p.id}`} className="product-card__image-link">
                 {p.imageUrl
-                    ? <img src={p.imageUrl} alt={p.name} className="product-card__image" />
+                    ? <img src={p.imageUrl} alt={p.name} className="product-card__image" loading="lazy" decoding="async" />
                     : <div className="product-card__no-img">
                         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.2">
                             <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -159,7 +147,6 @@ const Catalog = () => {
     const [brands, setBrands]           = useState([]);
     const [loading, setLoading]         = useState(true);
     const [toast, setToast]             = useState(null);
-    const [searchOpen, setSearchOpen]   = useState(false);
     const [filterOpen, setFilterOpen]   = useState(false);
     const [wishlistIds, setWishlistIds] = useState(new Set());
 
@@ -168,8 +155,6 @@ const Catalog = () => {
     const [selectedBrand, setSelectedBrand]             = useState(null);
     const [selectedColor, setSelectedColor]             = useState(null);
     const [sortBy, setSortBy]                           = useState('default');
-    const [cartCount, setCartCount]                     = useState(0);
-
     const showToast = useCallback((message, type = 'success') => setToast({ message, type }), []);
 
     const handleWishChange = useCallback((productId, isNowInWish) => {
@@ -207,21 +192,6 @@ const Catalog = () => {
         })();
     }, [token]);
 
-    useEffect(() => {
-        const refreshCartCount = () => {
-            if (!token) { setCartCount(0); return; }
-            fetch(`${API_BASE}/Cart`, { headers: { Authorization: `Bearer ${token}` } })
-                .then(res => (res.ok ? res.json() : null))
-                .then(data => {
-                    if (!data?.items) return;
-                    setCartCount(data.items.reduce((sum, item) => sum + (item.quantity || 0), 0));
-                })
-                .catch(() => {});
-        };
-        refreshCartCount();
-        window.addEventListener('inkflow-cart-changed', refreshCartCount);
-        return () => window.removeEventListener('inkflow-cart-changed', refreshCartCount);
-    }, [token]);
 
     useEffect(() => {
         if (!brandFromUrl || brands.length === 0) return;
@@ -244,6 +214,12 @@ const Catalog = () => {
             window.removeEventListener('keydown', onKeyDown);
         };
     }, [filterOpen]);
+
+    useEffect(() => {
+        const closeFilters = () => setFilterOpen(false);
+        window.addEventListener('inkflow-close-catalog-filters', closeFilters);
+        return () => window.removeEventListener('inkflow-close-catalog-filters', closeFilters);
+    }, []);
 
     const handleCategoryToggle = (id) => {
         setSelectedCategoryIds(prev =>
@@ -286,6 +262,11 @@ const Catalog = () => {
         setSelectedBrand(null);
         setSelectedColor(null);
         setSearchParams({});
+    };
+
+    const openFilters = () => {
+        closeSiteNavigation();
+        setFilterOpen(true);
     };
 
     return (
@@ -444,7 +425,7 @@ const Catalog = () => {
                             <button
                                 type="button"
                                 className="catalog-filter-toggle"
-                                onClick={() => setFilterOpen(true)}
+                                onClick={openFilters}
                             >
                                 Фільтри
                                 {hasFilters && <span className="catalog-filter-toggle__count">•</span>}
@@ -506,10 +487,6 @@ const Catalog = () => {
 
             </div>
             <SiteFooter />
-
-            {searchOpen && (
-                <SearchOverlay products={products} onClose={() => setSearchOpen(false)} />
-            )}
 
             {toast && (
                 <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />

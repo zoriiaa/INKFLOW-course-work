@@ -11,12 +11,7 @@
 .account-sidebar__avatar {
     width: 56px;
     height: 56px;
-    background: #000;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
+    object-fit: cover;
     margin-bottom: 4px;
 }
 
@@ -62,4 +57,62 @@
 
 .account-sidebar__link--danger:hover {
     background: #fff5f5;
+}
+
+@media (max-width: 700px) {
+    .account-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        padding: 10px;
+    }
+
+    .account-sidebar__avatar,
+    .account-sidebar__name,
+    .account-sidebar__email {
+        grid-column: 1 / -1;
+    }
+
+    .account-sidebar__avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .account-sidebar__name {
+        font-size: 17px;
+    }
+
+    .account-sidebar__email {
+        margin-bottom: 4px;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .account-sidebar__link {
+        min-height: 44px;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .account-sidebar__link--danger {
+        display: none;
+    }
+
+    .account-sidebar__link--admin {
+        grid-column: 1 / -1;
+        justify-content: center;
+        min-height: 52px;
+        margin-top: 2px;
+        background: #f5f5f5;
+        border: 1px solid #e8e8e8;
+        text-align: center;
+    }
+
+    .account-sidebar__link--admin svg {
+        flex: 0 0 18px;
+    }
+
+    .account-sidebar--profile .account-sidebar__link--admin {
+        display: none;
+    }
 }

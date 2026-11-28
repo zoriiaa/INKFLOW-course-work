@@ -20,10 +20,10 @@ public class AuthService : IAuthService
         _context = context;
     }
 
-    public async Task<bool> RegisterAsync(UserRegisterDto registerDto)
+    public async Task<string?> RegisterAsync(UserRegisterDto registerDto)
     {
         if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
-            return false;
+            return null;
 
         string salt = BCrypt.Net.BCrypt.GenerateSalt();
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password, salt);
@@ -48,10 +48,10 @@ public class AuthService : IAuthService
                 ConstraintName: "IX_Users_Email"
             })
         {
-            return false;
+            return null;
         }
 
-        return true;
+        return GenerateJwtToken(user);
     }
 
     public async Task<string?> LoginAsync(UserLoginDto loginDto)

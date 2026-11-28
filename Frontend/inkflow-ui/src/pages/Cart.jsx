@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
+import Toast from '../components/Toast.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
 import '../styles/Cart.css';
 
@@ -11,7 +12,7 @@ const Cart = () => {
     const token = localStorage.getItem('token');
     const [cart, setCart] = useState({ items: [], grandTotal: 0 });
     const [loading, setLoading] = useState(true);
-    const [toast, setToast] = useState('');
+    const [toast, setToast] = useState(null);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
 
     useEffect(() => {
@@ -66,14 +67,14 @@ const Cart = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) {
-                setToast('Не вдалося оформити замовлення');
+                setToast({ message: 'Не вдалося оформити замовлення', type: 'error' });
                 return;
             }
-            setToast('Замовлення успішно оформлено!');
+            setToast({ message: 'Замовлення успішно оформлено!', type: 'success' });
             await fetchCart();
             notifyCartChanged();
         } catch {
-            setToast("Помилка з'єднання");
+            setToast({ message: "Помилка з'єднання", type: 'error' });
         } finally {
             setCheckoutLoading(false);
         }
@@ -114,7 +115,7 @@ const Cart = () => {
                                     </button>
                                     <Link to={`/product/${item.productId}`} className="cart-item__img-wrap">
                                         {item.imageUrl
-                                            ? <img src={item.imageUrl} alt="" className="cart-item__img" />
+                                            ? <img src={item.imageUrl} alt="" className="cart-item__img" loading="lazy" decoding="async" />
                                             : <div className="cart-item__img cart-item__img--empty">—</div>
                                         }
                                     </Link>
@@ -169,7 +170,7 @@ const Cart = () => {
                 )}
             </main>
             <SiteFooter />
-            {toast && <div className="cart-toast">{toast}</div>}
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
         </div>
     );
 };

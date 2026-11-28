@@ -1,23 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import AccountSidebar from '../components/AccountSidebar.jsx';
+import Toast from '../components/Toast.jsx';
 import '../styles/Profile.css';
 
 const API_BASE = '/api';
-
-function Toast({ message, type, onClose }) {
-    useEffect(() => {
-        const t = setTimeout(onClose, 3000);
-        return () => clearTimeout(t);
-    }, [onClose]);
-    return (
-        <div className={`profile-catalog-toast profile-catalog-toast--${type}`}>
-            {message}
-        </div>
-    );
-}
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -164,6 +153,18 @@ export default function Profile() {
                                 {saving ? 'ЗБЕРІГАЄМО...' : 'ЗБЕРЕГТИ ЗМІНИ'}
                             </button>
                         </form>
+                    )}
+                    {!loading && (
+                        <button
+                            type="button"
+                            className="profile-mobile-logout"
+                            onClick={() => {
+                                localStorage.removeItem('token');
+                                navigate('/login');
+                            }}
+                        >
+                            ВИЙТИ
+                        </button>
                     )}
                 </section>
             </main>

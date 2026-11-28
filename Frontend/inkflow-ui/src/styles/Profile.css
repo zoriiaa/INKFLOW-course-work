@@ -20,7 +20,9 @@
 }
 
 .profile-main h1 {
-    margin-top: 0;
+    margin: 0 0 22px;
+    font-size: 23px;
+    line-height: 1.25;
 }
 
 .profile-form {
@@ -30,6 +32,7 @@
 
 .profile-form label {
     font-weight: 700;
+    font-size: 14px;
 }
 
 .profile-form input {
@@ -98,37 +101,8 @@
     font-weight: 600;
 }
 
-.profile-catalog-toast {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    padding: 15px 30px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    z-index: 9999;
-    border: 1px solid;
-    animation: profileSlideIn 0.3s ease-out;
-}
-
-.profile-catalog-toast--success {
-    background: #000;
-    color: #fff;
-    border-color: #555;
-}
-
-.profile-catalog-toast--error {
-    background: #fff;
-    color: #000;
-    border-color: #000;
-}
-
-@keyframes profileSlideIn {
-    from { transform: translateX(120%); opacity: 0; }
-    to   { transform: translateX(0);    opacity: 1; }
+.profile-mobile-logout {
+    display: none;
 }
 
 @media (max-width: 700px) {
@@ -138,48 +112,17 @@
         gap: 12px;
     }
 
-    .account-sidebar {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px;
-        padding: 10px;
-    }
-
-    .account-sidebar__avatar,
-    .account-sidebar__name,
-    .account-sidebar__email {
-        grid-column: 1 / -1;
-    }
-
-    .account-sidebar__avatar {
-        width: 48px;
-        height: 48px;
-        font-size: 24px;
-    }
-
-    .account-sidebar__name {
-        font-size: 18px;
-    }
-
-    .account-sidebar__email {
-        margin-bottom: 4px;
-        font-size: 12px;
-        overflow-wrap: anywhere;
-    }
-
-    .account-sidebar__link {
-        min-height: 44px;
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-
     .profile-main {
         padding: 18px 12px;
     }
 
     .profile-main h1 {
-        font-size: 21px;
+        font-size: 20px;
         line-height: 1.2;
+    }
+
+    .profile-form label {
+        font-size: 14px;
     }
 
     .profile-form input {
@@ -193,10 +136,17 @@
         min-height: 48px;
     }
 
-    .profile-catalog-toast {
-        left: 12px;
-        right: 12px;
-        top: 12px;
-        text-align: center;
+    .profile-mobile-logout {
+        display: block;
+        width: 100%;
+        min-height: 48px;
+        margin-top: 18px;
+        border: 1px solid #a40000;
+        background: #fff;
+        color: #a40000;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: .8px;
     }
 }

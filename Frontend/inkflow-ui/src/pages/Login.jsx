@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
-import loginPhoto from '../assets/images/LoginPhoto.svg';
+import loginPhoto from '../assets/images/LoginPhoto.optimized.jpg';
 import '../styles/Login.css';
 import SiteFooter from '../components/SiteFooter.jsx';
+import Toast from '../components/Toast.jsx';
 
 const Login = () => {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     });
-    const [showError, setShowError] = useState(false);
+    const [toast, setToast] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -32,13 +33,12 @@ const Login = () => {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem('token', data.token);
-                navigate('/home');
+                navigate('/catalog');
             } else {
-                setShowError(true);
-                setTimeout(() => setShowError(false), 3000);
+                setToast({ message: 'Невірний Email або пароль', type: 'error' });
             }
         } catch {
-            alert("Сервер не відповідає");
+            setToast({ message: 'Сервер не відповідає', type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -49,7 +49,7 @@ const Login = () => {
             <main className="login-hero">
 
                 <div className="login-panel-left">
-                    <img src={loginPhoto} alt="Art" className="login-photo-fit" />
+                    <img src={loginPhoto} alt="Art" className="login-photo-fit" fetchPriority="high" decoding="async" />
                 </div>
                 
                 <div className="login-panel-right">
@@ -106,11 +106,7 @@ const Login = () => {
 
            <SiteFooter/>
 
-            {showError && (
-                <div className="login-toast login-toast--error">
-                    Невірний Email або пароль
-                </div>
-            )}
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
         </div>
     );
 };

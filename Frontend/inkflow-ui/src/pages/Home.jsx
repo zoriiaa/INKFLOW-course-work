@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import homePhoto from '../assets/images/HomePhoto.svg';
+import homePhoto from '../assets/images/HomePhoto.optimized.jpg';
 import logo from '../assets/images/Logo.svg';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
 import '../styles/Home.css';
 
-import manuscriptPhoto from '../assets/images/brands/ManuscriptPhoto.svg';
-import sakuraPhoto     from '../assets/images/brands/SakuraPhoto.svg';
-import copicPhoto      from '../assets/images/brands/CopicPhoto.svg';
-import poscaPhoto      from '../assets/images/brands/PoscaPhoto.svg';
+import manuscriptPhoto from '../assets/images/brands/ManuscriptPhoto.optimized.jpg';
+import sakuraPhoto     from '../assets/images/brands/SakuraPhoto.optimized.jpg';
+import copicPhoto      from '../assets/images/brands/CopicPhoto.optimized.jpg';
+import poscaPhoto      from '../assets/images/brands/PoscaPhoto.optimized.jpg';
 
 import manuscriptLogo  from '../assets/images/brands/ManuscriptLogo.svg';
 import sakuraLogo      from '../assets/images/brands/SakuraLogo.svg';
@@ -41,7 +41,7 @@ const Home = () => {
         <div className="home-page">
             <section className="hero">
                 <div className="hero-photo-side">
-                    <img src={homePhoto} alt="Sketching" className="hero-photo" />
+                    <img src={homePhoto} alt="Sketching" className="hero-photo" fetchPriority="high" decoding="async" />
                 </div>
 
                 <div className="hero-content-side" ref={heroLogoRef}>
@@ -81,25 +81,25 @@ const Home = () => {
 
                 <div className="brands-grid">
                     <Link to="/catalog" className="brand-card brand-card--large brand-card--manuscript">
-                        <img src={manuscriptPhoto} alt="Manuscript" className="brand-card-photo" />
-                        <img src={manuscriptLogo}  alt="Manuscript logo" className="brand-card-logo-img" />
+                        <img src={manuscriptPhoto} alt="Manuscript" className="brand-card-photo" loading="lazy" decoding="async" />
+                        <img src={manuscriptLogo}  alt="Manuscript logo" className="brand-card-logo-img" loading="lazy" decoding="async" />
                     </Link>
 
                     <div className="brand-card-column">
                         <Link to="/catalog" className="brand-card brand-card--half">
-                            <img src={sakuraPhoto} alt="Sakura" className="brand-card-photo" />
-                            <img src={sakuraLogo}  alt="Sakura logo" className="brand-card-logo-img" />
+                            <img src={sakuraPhoto} alt="Sakura" className="brand-card-photo" loading="lazy" decoding="async" />
+                            <img src={sakuraLogo}  alt="Sakura logo" className="brand-card-logo-img" loading="lazy" decoding="async" />
                         </Link>
                     </div>
 
                     <Link to="/catalog" className="brand-card brand-card--large brand-card--posca">
-                        <img src={poscaPhoto} alt="Posca" className="brand-card-photo" />
-                        <img src={poscaLogo}  alt="Posca logo" className="brand-card-logo-img" />
+                        <img src={poscaPhoto} alt="Posca" className="brand-card-photo" loading="lazy" decoding="async" />
+                        <img src={poscaLogo}  alt="Posca logo" className="brand-card-logo-img" loading="lazy" decoding="async" />
                     </Link>
 
                     <Link to="/catalog" className="brand-card brand-card--large brand-card--copic">
-                        <img src={copicPhoto} alt="COPIC" className="brand-card-photo" />
-                        <img src={copicLogo}  alt="COPIC logo" className="brand-card-logo-img" />
+                        <img src={copicPhoto} alt="COPIC" className="brand-card-photo" loading="lazy" decoding="async" />
+                        <img src={copicLogo}  alt="COPIC logo" className="brand-card-logo-img" loading="lazy" decoding="async" />
                     </Link>
                 </div>
 

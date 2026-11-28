@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useLayoutEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Home from './pages/Home.jsx';
@@ -12,9 +12,28 @@ import ProductDetails from './pages/ProductDetails.jsx';
 import About from './pages/About.jsx';
 import Admin from './pages/AdminPanel.jsx';
 
+function ScrollToTop() {
+    const { pathname } = useLocation();
+
+    useLayoutEffect(() => {
+        const previousRestoration = window.history.scrollRestoration;
+        window.history.scrollRestoration = 'manual';
+        return () => {
+            window.history.scrollRestoration = previousRestoration;
+        };
+    }, []);
+
+    useLayoutEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+}
+
 function App() {
     return (
         <Router>
+            <ScrollToTop />
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/catalog" element={<Catalog />} />

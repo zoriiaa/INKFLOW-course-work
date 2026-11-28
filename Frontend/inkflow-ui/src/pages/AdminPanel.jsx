@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Toast from '../components/Toast.jsx';
 import '../styles/AdminPanel.css';
 
 const API_BASE = '/api';
@@ -32,14 +33,6 @@ function getUserIdFromToken(token) {
     } catch {
         return null;
     }
-}
-
-function Toast({ message, type, onClose }) {
-    useEffect(() => {
-        const t = setTimeout(onClose, 3500);
-        return () => clearTimeout(t);
-    }, [onClose]);
-    return <div className={`ap-toast ap-toast--${type}`}>{message}</div>;
 }
 
 const emptyForm = {
@@ -285,7 +278,7 @@ function ProductsSection({ token, showToast }) {
                             <td>{p.id}</td>
                             <td>
                                 {p.imageUrl ? (
-                                    <img src={p.imageUrl} alt="" className="ap-table__img" />
+                                    <img src={p.imageUrl} alt="" className="ap-table__img" loading="lazy" decoding="async" />
                                 ) : (
                                     <span className="ap-table__no-img">—</span>
                                 )}
@@ -766,7 +759,7 @@ function OrdersSection({ token, showToast }) {
                                     {o.orderItems && o.orderItems.map((item, index) => (
                                         <div key={`${o.id}-${item.productId}-${index}`} className="ap-order-item">
                                             {item.imageUrl ? (
-                                                <img src={item.imageUrl} alt="" className="ap-order-item__img" />
+                                                <img src={item.imageUrl} alt="" className="ap-order-item__img" loading="lazy" decoding="async" />
                                             ) : (
                                                 <span className="ap-order-item__no-img">—</span>
                                             )}
@@ -899,6 +892,7 @@ export default function Admin() {
     const token = localStorage.getItem('token');
     const [toast, setToast] = useState(null);
     const [activeTab, setActiveTab] = useState('products');
+    const [navOpen, setNavOpen] = useState(false);
 
     const showToast = useCallback((message, type = 'info') => {
         setToast({ message, type });
@@ -915,6 +909,27 @@ export default function Admin() {
             setTimeout(() => navigate('/home'), 2000);
         }
     }, [token, navigate, showToast]);
+
+    useEffect(() => {
+        if (!navOpen) return;
+        const onKeyDown = event => {
+            if (event.key === 'Escape') setNavOpen(false);
+        };
+        document.body.classList.add('ap-menu-open');
+        window.addEventListener('keydown', onKeyDown);
+        return () => {
+            document.body.classList.remove('ap-menu-open');
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    }, [navOpen]);
+
+    useEffect(() => {
+        const closeOnDesktop = () => {
+            if (window.innerWidth > 768) setNavOpen(false);
+        };
+        window.addEventListener('resize', closeOnDesktop);
+        return () => window.removeEventListener('resize', closeOnDesktop);
+    }, []);
 
     const menuItems = [
         {
@@ -977,17 +992,43 @@ export default function Admin() {
 
     return (
         <div className="ap-page">
-            <aside className="ap-sidebar">
+            {navOpen && (
+                <button
+                    type="button"
+                    className="ap-mobile-nav-backdrop"
+                    aria-label="Закрити навігацію"
+                    onClick={() => setNavOpen(false)}
+                />
+            )}
+            <aside className={`ap-sidebar${navOpen ? ' ap-sidebar--open' : ''}`}>
                 <div className="ap-sidebar__brand">
-                    <span className="ap-sidebar__logo">INKFLOW</span>
-                    <span className="ap-sidebar__role">ADMIN PANEL</span>
+                    <div className="ap-sidebar__brand-copy">
+                        <span className="ap-sidebar__logo">INKFLOW</span>
+                        <span className="ap-sidebar__role">ADMIN PANEL</span>
+                    </div>
+                    <button className="ap-site-link-mobile" onClick={() => navigate('/home')}>НА САЙТ</button>
+                    <button
+                        type="button"
+                        className="ap-menu-toggle"
+                        aria-label={navOpen ? 'Закрити розділи' : 'Відкрити розділи'}
+                        aria-expanded={navOpen}
+                        onClick={() => setNavOpen(open => !open)}
+                    >
+                        {navOpen ? '×' : '☰'}
+                    </button>
                 </div>
                 <nav className="ap-nav">
+                    <button type="button" className="ap-nav__close" onClick={() => setNavOpen(false)} aria-label="Закрити розділи">
+                        ×
+                    </button>
                     {menuItems.map(item => (
                         <button
                             key={item.id}
                             className={`ap-nav__item${activeTab === item.id ? ' ap-nav__item--active' : ''}`}
-                            onClick={() => setActiveTab(item.id)}
+                            onClick={() => {
+                                setActiveTab(item.id);
+                                setNavOpen(false);
+                            }}
                         >
                             {item.icon}
                             {item.label}

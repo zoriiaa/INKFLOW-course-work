@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.svg';
-import collage from '../assets/images/Collage.png';
+import collage from '../assets/images/Collage.optimized.jpg';
 import '../styles/Register.css';
 import SiteFooter from '../components/SiteFooter.jsx';
+import Toast from '../components/Toast.jsx';
 
 const Register = () => {
-    const [showToast, setShowToast] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState(null);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -32,18 +33,16 @@ const Register = () => {
                 body: JSON.stringify(formData)
             });
             if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('token', data.token);
                 registrationSucceeded = true;
-                setShowToast(true); 
-                setTimeout(() => {
-                    setShowToast(false);
-                    navigate('/'); 
-                }, 3000);
+                navigate('/catalog');
             } else {
                 const error = await response.text();
-                alert(error);
+                setToast({ message: error || 'Не вдалося створити обліковий запис', type: 'error' });
             }
         } catch {
-            alert("Сервер не відповідає");
+            setToast({ message: 'Сервер не відповідає', type: 'error' });
         } finally {
             if (!registrationSucceeded) setLoading(false);
         }
@@ -107,18 +106,13 @@ const Register = () => {
                 </div>
 
                 <div className="reg-panel-right">
-                    <img src={collage} alt="Art Collage" className="collage-fit" />
+                    <img src={collage} alt="Art Collage" className="collage-fit" loading="lazy" decoding="async" />
                     <span className="collage-author-tag">by @zoroo.art</span>
                 </div>
             </main>
 
-            
-<SiteFooter />
-            {showToast && (
-                <div className="registration-toast">
-                    Успішно зареєстровано!
-                </div>
-            )}
+            <SiteFooter />
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
         </div>
     );
 };

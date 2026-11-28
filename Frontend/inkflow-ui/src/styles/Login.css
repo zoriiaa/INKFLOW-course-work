@@ -197,40 +197,6 @@
     width: 150px;
 }
 
-/* ===== TOAST СПОВІЩЕННЯ ===== */
-
-.login-toast {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    padding: 15px 30px;
-    font-size: 14px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    animation: slideIn 0.3s ease-out;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.login-toast--error {
-    background-color: #fff;
-    color: #000;
-    border: 1px solid #000;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
 /* ===== АДАПТИВ ===== */
 
 @media (max-width: 1100px) {

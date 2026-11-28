@@ -1,23 +1,12 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
+import Toast from '../components/Toast.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
 import '../styles/ProductDetails.css';
 
 const API_BASE = '/api';
-
-function Toast({ message, type, onClose }) {
-    useEffect(() => {
-        const t = setTimeout(onClose, 3000);
-        return () => clearTimeout(t);
-    }, [onClose]);
-    return (
-        <div className={`pd-toast pd-toast--${type}`}>
-            {message}
-        </div>
-    );
-}
 
 function MagnifierImage({ src, alt }) {
     const containerRef = useRef(null);
@@ -65,7 +54,7 @@ function MagnifierImage({ src, alt }) {
             onMouseLeave={handleMouseLeave}
             onMouseMove={handleMouseMove}
         >
-            <img src={src} alt={alt} className={active ? 'pd-img-zooming' : ''} />
+            <img src={src} alt={alt} className={active ? 'pd-img-zooming' : ''} fetchPriority="high" decoding="async" />
             {active && (
                 <div
                     ref={lensRef}
@@ -98,6 +87,7 @@ export default function ProductDetails() {
     const [toast, setToast] = useState(null);
     const [inWish, setInWish] = useState(false);
     const [cartLoading, setCartLoading] = useState(false);
+    const [expandedDescriptionId, setExpandedDescriptionId] = useState(null);
 
     const showToast = (message, type = 'success') => setToast({ message, type });
 
@@ -159,6 +149,9 @@ export default function ProductDetails() {
     };
 
     const specs = product ? buildSpecs(product) : [];
+    const description = product?.description || 'Опис відсутній.';
+    const descriptionExpandable = description.length > 180;
+    const descriptionExpanded = expandedDescriptionId === product?.id;
 
     return (
         <div className="product-details-page">
@@ -189,8 +182,15 @@ export default function ProductDetails() {
                             <p className="product-details-brand">{product.brandName} · {product.categoryName}</p>
                             <h1>{product.name}</h1>
                             <p className="product-details-price">{product.price}₴</p>
-                            <p className="product-details-desc">{product.description || 'Опис відсутній.'}</p>
-
+                            <div className="product-details-actions">
+                                <button
+                                    onClick={addToCart}
+                                    className={`details-buy-btn${cartLoading ? ' details-buy-btn--loading' : ''}`}
+                                    disabled={product.stock === 0 || cartLoading}
+                                >
+                                    {cartLoading ? 'ДОДАЄТЬСЯ...' : product.stock === 0 ? 'НЕМАЄ В НАЯВНОСТІ' : 'ДОДАТИ В КОШИК'}
+                                </button>
+                            </div>
                             {specs.length > 0 && (
                                 <div className="product-specs">
                                     <h3>Характеристики</h3>
@@ -202,16 +202,24 @@ export default function ProductDetails() {
                                     ))}
                                 </div>
                             )}
-
-                            <div className="product-details-actions">
+                            <p
+                                className={`product-details-desc${descriptionExpandable && !descriptionExpanded ? ' product-details-desc--collapsed' : ''}`}
+                                id="product-description"
+                            >
+                                {description}
+                            </p>
+                            {descriptionExpandable && (
                                 <button
-                                    onClick={addToCart}
-                                    className={`details-buy-btn${cartLoading ? ' details-buy-btn--loading' : ''}`}
-                                    disabled={product.stock === 0 || cartLoading}
+                                    type="button"
+                                    className="product-details-desc-toggle"
+                                    aria-expanded={descriptionExpanded}
+                                    aria-controls="product-description"
+                                    onClick={() => setExpandedDescriptionId(descriptionExpanded ? null : product.id)}
                                 >
-                                    {cartLoading ? 'ДОДАЄТЬСЯ...' : product.stock === 0 ? 'НЕМАЄ В НАЯВНОСТІ' : 'ДОДАТИ В КОШИК'}
+                                    {descriptionExpanded ? 'Згорнути' : 'Читати повністю'}
                                 </button>
-                            </div>
+                            )}
+
                         </div>
                     </div>
                 )}

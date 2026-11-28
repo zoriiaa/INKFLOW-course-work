@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import SiteHeader from '../components/SiteHeader.jsx';
 import SiteFooter from '../components/SiteFooter.jsx';
+import Toast from '../components/Toast.jsx';
 import { notifyCartChanged } from '../utils/cartEvents.js';
 import '../styles/Wishlist.css';
 
@@ -10,7 +11,7 @@ const Wishlist = () => {
     const token = localStorage.getItem('token');
     const [wishlist, setWishlist] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [toast, setToast] = useState('');
+    const [toast, setToast] = useState(null);
 
     useEffect(() => {
         fetchWishlist();
@@ -50,7 +51,7 @@ const Wishlist = () => {
 
     const addToCart = async (id) => {
         if (!token) {
-            setToast('Увійдіть, щоб додати в кошик');
+            setToast({ message: 'Увійдіть, щоб додати в кошик', type: 'error' });
             return;
         }
         try {
@@ -62,21 +63,15 @@ const Wishlist = () => {
             });
             if (res.ok) {
                 notifyCartChanged();
-                setToast('Додано в кошик');
+                setToast({ message: 'Додано в кошик', type: 'success' });
             } else {
-                setToast('Не вдалося додати в кошик');
+                setToast({ message: 'Не вдалося додати в кошик', type: 'error' });
             }
         } catch (e) {
             console.error(e);
-            setToast("Помилка з'єднання");
+            setToast({ message: "Помилка з'єднання", type: 'error' });
         }
     };
-
-    useEffect(() => {
-        if (!toast) return;
-        const t = setTimeout(() => setToast(''), 2500);
-        return () => clearTimeout(t);
-    }, [toast]);
 
     return (
         <div className="wishlist-page">
@@ -93,7 +88,7 @@ const Wishlist = () => {
                     <div className="wishlist-grid">
                         {wishlist.map(product => (
                             <div key={product.id} className="wish-card">
-                                <img src={product.imageUrl} alt={product.name} />
+                                <img src={product.imageUrl} alt={product.name} loading="lazy" decoding="async" />
                                 <h3>{product.name}</h3>
                                 <p>{product.price}₴</p>
                                 <div className="wish-card__actions">
@@ -106,7 +101,7 @@ const Wishlist = () => {
                 )}
             </main>
             <SiteFooter />
-            {toast && <div className="wishlist-toast">{toast}</div>}
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
         </div>
     );
 };

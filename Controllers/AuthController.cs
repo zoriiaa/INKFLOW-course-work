@@ -19,13 +19,13 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto registerDto)
     {
-        var result = await _authService.RegisterAsync(registerDto);
-        if (!result)
+        var token = await _authService.RegisterAsync(registerDto);
+        if (token == null)
         {
             return BadRequest("Користувач з таким Email вже існує");
         }
 
-        return Ok("Реєстрація успішна!");
+        return Ok(new { token });
     }
 
     [HttpPost("login")]

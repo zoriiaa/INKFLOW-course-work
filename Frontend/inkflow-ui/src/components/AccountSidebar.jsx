@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import profilePhoto from '../assets/images/ProfilePhoto.jpg';
 import './AccountSidebar.css';
 
 function parseJwt(token) {
@@ -33,8 +34,8 @@ export default function AccountSidebar({ active }) {
     const iconStroke = isOrdersActive ? '#ffffff' : '#000000';
 
     return (
-        <aside className="account-sidebar">
-            <div className="account-sidebar__avatar" aria-hidden>☺</div>
+        <aside className={`account-sidebar${active === 'profile' ? ' account-sidebar--profile' : ''}`}>
+            <img className="account-sidebar__avatar" src={profilePhoto} alt="" />
             <div className="account-sidebar__name">{name}</div>
             {email && <div className="account-sidebar__email">{email}</div>}
 
@@ -67,7 +68,7 @@ export default function AccountSidebar({ active }) {
             {isAdmin && (
                 <Link
                     to="/admin"
-                    className={`account-sidebar__link${active === 'admin' ? ' account-sidebar__link--active' : ''}`}
+                    className={`account-sidebar__link account-sidebar__link--admin${active === 'admin' ? ' account-sidebar__link--active' : ''}`}
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>

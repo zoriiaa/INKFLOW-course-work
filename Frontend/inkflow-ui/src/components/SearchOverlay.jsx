@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './SearchOverlay.css';
 
@@ -78,7 +78,7 @@ export default function SearchOverlay({ products, onClose }) {
                             >
                                 <div className="search-result-card__img">
                                     {p.imageUrl
-                                        ? <img src={p.imageUrl} alt={p.name} />
+                                        ? <img src={p.imageUrl} alt={p.name} loading="lazy" decoding="async" />
                                         : <div className="search-result-card__no-img">—</div>
                                     }
                                 </div>

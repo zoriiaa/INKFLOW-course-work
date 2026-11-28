@@ -16,8 +16,8 @@
 .wishlist-title {
     margin: 0 0 24px;
     font-size: 38px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-weight: 700;
+    letter-spacing: normal;
 }
 
 .loader,
@@ -96,22 +96,13 @@
     color: #000;
 }
 
-.wishlist-toast {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    z-index: 9999;
-    background: #111;
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: 6px;
-    font-weight: 700;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, .2);
-}
-
 @media (max-width: 620px) {
     .wishlist-container {
         padding: 28px 18px 56px;
+    }
+
+    .wishlist-title {
+        font-size: clamp(28px, 8vw, 38px);
     }
 
     .wishlist-grid {
